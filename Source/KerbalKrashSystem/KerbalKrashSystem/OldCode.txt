@@ -1,0 +1,218 @@
+﻿using System;
+using System.Collections.Generic;
+using KSP.IO;
+using UnityEngine;
+using Random = UnityEngine.Random;
+
+namespace KerbalKrashSystem
+{
+    public delegate void DamageReceivedEvent(KerbalKrashGlobal sender, Vector3 e);
+
+    public abstract class KerbalKrashGlobal : PartModule
+    {
+        public struct Krash
+        {
+            public Vector3 RelativeVelocity;
+            public Vector3 ContactPoint;
+        }
+
+        #region Public fields
+        /// <summary>
+        /// Fired when Damage is received.
+        /// </summary>
+        public event DamageReceivedEvent DamageReceived;
+
+        [Persistent]
+        private Vector3 _damage = Vector3.zero;
+        /// <summary>
+        /// 3D vector indicating the damage including the direction of the damage.
+        /// </summary>
+        public Vector3 Damage 
+        {
+            get { return _damage; }
+            set
+            {
+                _damage = value;
+                DamagePercentage = _damage.magnitude;
+            }
+        }
+
+        /// <summary>
+        /// Value indicating the damage percentage of the part.
+        /// </summary>
+        [KSPField(guiName = "Damage", isPersistant = true, guiActive = true, guiActiveEditor = true, guiFormat = "P")] 
+        public float DamagePercentage;
+        #endregion
+
+        #region Protected fields
+        /// <summary>
+        /// Value indicating the scaling of the impact tolerance of the part.
+        /// Tolerances are scaled to create a margin for damaging instead of exploding.
+        /// </summary>
+        protected float ToleranceScaling = 5.0f;
+
+        /// <summary>
+        /// Original impact tolerance of the part.
+        /// </summary>
+        protected float OriginalCrashTolerance { get; private set; }
+
+        /// <summary>
+        /// This value scales the minimum random damage (based on the impact velocity) down by this amount.
+        /// Default value is 15.0f.
+        /// </summary>
+        protected float RandomMinDivider = 15.0f;
+
+        /// <summary>
+        /// This value scales the maximum random damage (based on the impact velocity) down by this amount.
+        /// Default value is 2.0f.
+        /// </summary>
+        protected float RandomMaxDivider = 2.0f;
+        #endregion
+
+        #region Private fields
+        private List<Krash> _krashes = new List<Krash>();
+        #endregion
+
+        private void OnEnable()
+        {
+            if (!HighLogic.LoadedSceneIsFlight) return;
+
+            OnEnabled();
+        }
+
+        protected virtual void OnEnabled()
+        {
+            OriginalCrashTolerance = part.crashTolerance;
+
+            part.crashTolerance = OriginalCrashTolerance * ToleranceScaling;
+        }
+
+        protected virtual void OnCollisionEnter(Collision collision)
+        {
+            try
+            {
+                if (part == null) return;
+
+                if (collision.relativeVelocity.magnitude <= OriginalCrashTolerance)
+                    return; //Only receive damage above the original tolerance.
+                if (collision.relativeVelocity.magnitude >= part.crashTolerance)
+                    part.explode(); //Explode anyway if impact speed is above the new crash tolerance.
+
+
+                Damage += collision.relativeVelocity/part.crashTolerance; //Damage "percentage" per axis. 
+
+                if (DamagePercentage <= 0) return; //No need to do anything.
+
+                if (DamageReceived != null) 
+                    DamageReceived(this, Damage); //Fire "DamageReceived" event.
+
+                _krashes.Add(new Krash { RelativeVelocity = collision.relativeVelocity, ContactPoint = collision.contacts[0].point });
+
+                ApplyDamage(collision.relativeVelocity, collision.contacts[0].point);
+            }
+            catch (Exception exc)
+            {
+                Debug.Log(exc.StackTrace);
+            }
+        }
+
+        private bool ApplyDamage(Vector3 relativeVelocity, Vector3 contactPoint)
+        {
+            Debug.Log("Location TransformPoint: " + transform.TransformPoint(contactPoint));
+            Debug.Log("Applying damage: " + relativeVelocity);
+
+            foreach (MeshFilter meshFilter in gameObject.GetComponentsInChildren(typeof(MeshFilter)))
+            {
+                Mesh mesh = meshFilter.mesh;
+                if (mesh == null) return false;
+
+                Debug.Log("Location MeshFilter.TransformPoint: " + meshFilter.transform.TransformPoint(contactPoint));
+                Debug.Log("Location MeshFilter.InverseTransformPoint: " + meshFilter.transform.InverseTransformPoint(contactPoint));
+
+                Vector3[] _vertices = mesh.vertices;
+
+                for (int i = 0; i < _vertices.Length; i++)
+                {
+                    Vector3 vertex = _vertices[i];
+
+                    float distance = Vector3.Distance(meshFilter.transform.TransformPoint(vertex), meshFilter.transform.InverseTransformPoint(contactPoint));
+                    if (distance > 1.5f) continue;
+
+                    Vector3 localVertex = meshFilter.transform.TransformPoint(vertex);
+
+                    localVertex.x += Random.Range(relativeVelocity.x / 15.0f, relativeVelocity.x / 2.0f) /
+                                part.crashTolerance;
+                    localVertex.y += Random.Range(relativeVelocity.y / 15.0f, relativeVelocity.y / 2.0f) /
+                                part.crashTolerance;
+                    localVertex.z += Random.Range(relativeVelocity.z / 15.0f, relativeVelocity.z / 2.0f) /
+                                part.crashTolerance;
+
+                    vertex = meshFilter.transform.InverseTransformPoint(localVertex);
+
+                    _vertices[i] = vertex;
+                }
+
+                mesh.vertices = _vertices;
+            }
+
+            return true;
+        }
+
+        #region Save
+        public override void OnSave(ConfigNode node)
+        {
+            base.OnSave(node);
+
+            if (!HighLogic.LoadedSceneIsFlight) return;
+            if (DamagePercentage <= 0 || _krashes.Count <= 0 || part == null || part.vessel == null) return;
+
+            PluginConfiguration configuration = PluginConfiguration.CreateForType<KerbalKrashGlobal>();
+
+            configuration[part.flightID + "Damage"] = Damage;
+            configuration[part.flightID + "KrashesCount"] = _krashes.Count;
+
+            for (int i = 0; i < _krashes.Count; i++)
+            {
+                configuration[part.flightID + "RelativeVelocity[" + i + "]"] = _krashes[i].RelativeVelocity;
+                configuration[part.flightID + "ContactPoint[" + i + "]"] = _krashes[i].ContactPoint;
+            }
+
+            configuration.save();
+
+            Debug.Log("[KerbalKrashSystem] Saved krashes: " + _krashes.Count);
+        }
+        #endregion
+
+        #region Load
+        public override void OnLoad(ConfigNode node)
+        {
+            base.OnLoad(node);
+
+            if (!HighLogic.LoadedSceneIsFlight) return;
+            if (part == null || part.vessel == null) return;
+
+            PluginConfiguration configuration = PluginConfiguration.CreateForType<KerbalKrashGlobal>();
+            configuration.load();
+
+            int impactCount = configuration.GetValue<int>(part.flightID + "KrashesCount");
+            if (impactCount <= 0) return; //No previous impacts to apply.
+
+            Debug.Log("[KerbalKrashSystem] Loaded krashes: " + impactCount);
+
+            Damage = configuration.GetValue<Vector3>(part.flightID + "Damage");
+
+            _krashes = new List<Krash>();
+
+            for (int i = 0; i < impactCount; i++)
+            {
+                _krashes.Add(new Krash { RelativeVelocity = configuration.GetValue<Vector3>(part.flightID + "RelativeVelocity[" + i + "]"), ContactPoint = configuration.GetValue<Vector3>(part.flightID + "ContactPoint[" + i + "]") });
+            }
+
+            foreach (Krash impact in _krashes)
+                ApplyDamage(impact.RelativeVelocity, impact.ContactPoint);
+
+            Debug.Log("[KerbalKrashSystem] Applied krashes: " + _krashes.Count);
+        }
+        #endregion
+    }
+}

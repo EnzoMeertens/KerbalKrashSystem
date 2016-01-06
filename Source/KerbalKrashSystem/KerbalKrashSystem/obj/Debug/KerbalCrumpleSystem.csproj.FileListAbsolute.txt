@@ -1,0 +1,13 @@
+c:\users\enzo meertens\documents\visual studio 2013\Projects\KerbalCrumpleSystem\KerbalCrumpleSystem\bin\Debug\KerbalCrumpleSystem.dll
+c:\users\enzo meertens\documents\visual studio 2013\Projects\KerbalCrumpleSystem\KerbalCrumpleSystem\bin\Debug\KerbalCrumpleSystem.pdb
+c:\users\enzo meertens\documents\visual studio 2013\Projects\KerbalCrumpleSystem\KerbalCrumpleSystem\bin\Debug\Assembly-CSharp.dll
+c:\users\enzo meertens\documents\visual studio 2013\Projects\KerbalCrumpleSystem\KerbalCrumpleSystem\bin\Debug\UnityEngine.dll
+c:\users\enzo meertens\documents\visual studio 2013\Projects\KerbalCrumpleSystem\KerbalCrumpleSystem\bin\Debug\Assembly-CSharp-firstpass.dll
+c:\users\enzo meertens\documents\visual studio 2013\Projects\KerbalCrumpleSystem\KerbalCrumpleSystem\bin\Debug\TDx.TDxInput.dll
+c:\users\enzo meertens\documents\visual studio 2013\Projects\KerbalCrumpleSystem\KerbalCrumpleSystem\bin\Debug\TrackIRUnity.dll
+c:\users\enzo meertens\documents\visual studio 2013\Projects\KerbalCrumpleSystem\KerbalCrumpleSystem\bin\Debug\Mono.Cecil.dll
+c:\users\enzo meertens\documents\visual studio 2013\Projects\KerbalCrumpleSystem\KerbalCrumpleSystem\bin\Debug\Mono.Security.dll
+c:\users\enzo meertens\documents\visual studio 2013\Projects\KerbalCrumpleSystem\KerbalCrumpleSystem\obj\Debug\KerbalCrumpleSystem.dll
+c:\users\enzo meertens\documents\visual studio 2013\Projects\KerbalCrumpleSystem\KerbalCrumpleSystem\obj\Debug\KerbalCrumpleSystem.pdb
+D:\Steam\SteamApps\common\Kerbal Space Program\GameData\KerbalCrumpleSystem\Plugins\KerbalCrumpleSystem.dll
+D:\Steam\SteamApps\common\Kerbal Space Program\GameData\KerbalCrumpleSystem\Plugins\KerbalCrumpleSystem.pdb
