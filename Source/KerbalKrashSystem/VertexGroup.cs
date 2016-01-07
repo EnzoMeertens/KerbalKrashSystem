@@ -10,18 +10,18 @@ namespace KerbalKrashSystem
     class VertexGroup
     {
         Dictionary<MeshFilter, List<int>> vertexDictionary = new Dictionary<MeshFilter, List<int>>();
-        private Vector3 center;
+        private int center;
         internal Vector3 Center
         {
             get
             {
-                return center;
+                return centerFilter.transform.TransformPoint(centerFilter.mesh.vertices[center]);
             }
         }
 
         MeshFilter centerFilter;
 
-        public VertexGroup(Vector3 center, MeshFilter centerFilter)
+        public VertexGroup(int center, MeshFilter centerFilter)
         {
             this.center = center;
             this.centerFilter = centerFilter;
@@ -44,8 +44,8 @@ namespace KerbalKrashSystem
 
         internal void Deform(Vector3 rangeMin, Vector3 rangeMax, float tolerance, Vector4 contactPoint, float DentDistance)
         {
-            Vector3 centerP = centerFilter.transform.TransformPoint(center);
-            float distance = Vector3.Distance(centerP, contactPoint); //Get the distance from the vertex to the position of the krash.
+            Vector3 worldCenter = Center;
+            float distance = Vector3.Distance(worldCenter, contactPoint); //Get the distance from the vertex to the position of the krash.
             if (distance <= DentDistance)
             {
                 Vector3 transform;

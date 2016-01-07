@@ -118,10 +118,11 @@ namespace KerbalKrashSystem
         private void ApplyKrash(Krash krash)
         {
             Vector3 relativeVelocity = part.transform.TransformDirection(krash.RelativeVelocity); //Transform the direction of the collision to the world reference frame.
-            
+
+            Vector4 worldPosContact = part.transform.TransformPoint(krash.ContactPoint);
             foreach (VertexGroup group in vGroups)
             {
-                group.Deform(relativeVelocity / RandomMinDivider, relativeVelocity / RandomMaxDivider , part.crashTolerance / Malleability, part.transform.TransformPoint(krash.ContactPoint), DentDistance);
+                group.Deform(relativeVelocity / RandomMinDivider, relativeVelocity / RandomMaxDivider , part.crashTolerance / Malleability, worldPosContact, DentDistance);
             }
 
             //Fire "DamageReceived" event.
@@ -173,7 +174,7 @@ namespace KerbalKrashSystem
                     }
                     if (minGroup == null)
                     {
-                        minGroup = new VertexGroup(worldVertex, meshFilter);
+                        minGroup = new VertexGroup(i, meshFilter);
                         vGroups.Add(minGroup);
                     }
                     minGroup.AddVertex(meshFilter, i);
