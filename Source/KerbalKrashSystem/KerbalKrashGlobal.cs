@@ -10,6 +10,8 @@ namespace KerbalKrashSystem
 
     public abstract class KerbalKrashGlobal : PartModule
     {
+        private static Dictionary<string, List<VertexGroup>> VertexGroupDictionary = new Dictionary<string, List<VertexGroup>>();
+
         #region Structs
         #region Krash
         /// <summary>
@@ -120,9 +122,10 @@ namespace KerbalKrashSystem
             Vector3 relativeVelocity = part.transform.TransformDirection(krash.RelativeVelocity); //Transform the direction of the collision to the world reference frame.
 
             Vector4 worldPosContact = part.transform.TransformPoint(krash.ContactPoint);
+            MeshFilter[] meshList = part.FindModelComponents<MeshFilter>();
             foreach (VertexGroup group in vGroups)
             {
-                group.Deform(relativeVelocity / RandomMinDivider, relativeVelocity / RandomMaxDivider , part.crashTolerance / Malleability, worldPosContact, DentDistance);
+                group.Deform(meshList, relativeVelocity / RandomMinDivider, relativeVelocity / RandomMaxDivider , part.crashTolerance / Malleability, worldPosContact, DentDistance);
             }
 
             //Fire "DamageReceived" event.
@@ -147,47 +150,59 @@ namespace KerbalKrashSystem
 
         private void InitVertexGroups()
         {
-            vGroups = new List<VertexGroup>();
-            foreach (MeshFilter meshFilter in gameObject.GetComponentsInChildren(typeof(MeshFilter))) //Apply deformation to every mesh in this part.
+            if (!VertexGroupDictionary.ContainsKey(part.partInfo.partUrl))
             {
-                Mesh mesh = meshFilter.mesh;
-
-                if (mesh == null)
-                    continue; //Unable to apply damage on invalid mesh.
-
-                Vector3[] vertices = mesh.vertices; //Save all vertices from the mesh in a temporary local variable (speed increase).
-
-                for (int i = 0; i < vertices.Length; i++)
+                vGroups = new List<VertexGroup>();
+                int meshIndex = 0;
+                MeshFilter[] meshList = part.FindModelComponents<MeshFilter>();
+                foreach (MeshFilter meshFilter in meshList) //Apply deformation to every mesh in this part.
                 {
-                    Vector3 worldVertex = meshFilter.transform.TransformPoint(vertices[i]); //Transform the point of contact into the world reference frame.
-                    float minDistance = float.MaxValue;
-                    VertexGroup minGroup = null;
-                    foreach (VertexGroup group in vGroups)
-                    {
-                        float distance = Vector3.Distance(worldVertex, group.Center); //Get the distance from the vertex to the position of the krash.
+                    Mesh mesh = meshFilter.mesh;
 
-                        if (distance < GroupDistance && distance < minDistance)
+                    if (mesh == null)
+                        continue; //Unable to apply damage on invalid mesh.
+
+                    Vector3[] vertices = mesh.vertices; //Save all vertices from the mesh in a temporary local variable (speed increase).
+
+                    for (int i = 0; i < vertices.Length; i++)
+                    {
+                        Vector3 worldVertex = meshFilter.transform.TransformPoint(vertices[i]); //Transform the point of contact into the world reference frame.
+                        float minDistance = float.MaxValue;
+                        VertexGroup minGroup = null;
+                        foreach (VertexGroup group in vGroups)
                         {
-                            minDistance = distance;
-                            minGroup = group;
+                            float distance = Vector3.Distance(worldVertex, group.Center(meshList)); //Get the distance from the vertex to the position of the krash.
+
+                            if (distance < GroupDistance && distance < minDistance)
+                            {
+                                minDistance = distance;
+                                minGroup = group;
+                            }
                         }
+                        if (minGroup == null)
+                        {
+                            minGroup = new VertexGroup(i, meshIndex);
+                            vGroups.Add(minGroup);
+                        }
+                        minGroup.AddVertex(meshIndex, i);
                     }
-                    if (minGroup == null)
-                    {
-                        minGroup = new VertexGroup(i, meshFilter);
-                        vGroups.Add(minGroup);
-                    }
-                    minGroup.AddVertex(meshFilter, i);
+
+                    #region Experimental
+                    //if (part.Modules.Contains("ModuleEnginesFX") //For some reason ModuleEnginesFX-engines sink into the terrain when updating collider mesh.
+                    //    || part.collider == null) 
+                    //    continue;
+
+                    //((MeshCollider) (part.collider)).sharedMesh = null;
+                    //((MeshCollider) (part.collider)).sharedMesh = mesh;
+                    #endregion
+
+                    meshIndex++;
                 }
-
-                #region Experimental
-                //if (part.Modules.Contains("ModuleEnginesFX") //For some reason ModuleEnginesFX-engines sink into the terrain when updating collider mesh.
-                //    || part.collider == null) 
-                //    continue;
-
-                //((MeshCollider) (part.collider)).sharedMesh = null;
-                //((MeshCollider) (part.collider)).sharedMesh = mesh;
-                #endregion
+                VertexGroupDictionary[part.partInfo.partUrl] = vGroups;
+            }
+            else
+            {
+                vGroups = VertexGroupDictionary[part.partInfo.partUrl];
             }
         }
 

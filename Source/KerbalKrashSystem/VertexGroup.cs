@@ -9,25 +9,24 @@ namespace KerbalKrashSystem
 {
     class VertexGroup
     {
-        Dictionary<MeshFilter, List<int>> vertexDictionary = new Dictionary<MeshFilter, List<int>>();
+        Dictionary<int, List<int>> vertexDictionary = new Dictionary<int, List<int>>();
         private int center;
-        internal Vector3 Center
+        internal Vector3 Center(MeshFilter[] filterList)
         {
-            get
-            {
-                return centerFilter.transform.TransformPoint(centerFilter.mesh.vertices[center]);
-            }
+            MeshFilter centerF = filterList[centerFilter];
+            return centerF.transform.TransformPoint(centerF.mesh.vertices[center]);
+            
         }
 
-        MeshFilter centerFilter;
+        int centerFilter;
 
-        public VertexGroup(int center, MeshFilter centerFilter)
+        public VertexGroup(int center, int centerFilter)
         {
             this.center = center;
             this.centerFilter = centerFilter;
         }
 
-        internal void AddVertex(MeshFilter meshFilter, int i)
+        internal void AddVertex(int meshFilter, int i)
         {
             List<int> indexList;
             if (vertexDictionary.ContainsKey(meshFilter))
@@ -42,9 +41,9 @@ namespace KerbalKrashSystem
             indexList.Add(i);
         }
 
-        internal void Deform(Vector3 rangeMin, Vector3 rangeMax, float tolerance, Vector4 contactPoint, float DentDistance)
+        internal void Deform(MeshFilter[] filterList, Vector3 rangeMin, Vector3 rangeMax, float tolerance, Vector4 contactPoint, float DentDistance)
         {
-            Vector3 worldCenter = Center;
+            Vector3 worldCenter = Center(filterList);
             float distance = Vector3.Distance(worldCenter, contactPoint); //Get the distance from the vertex to the position of the krash.
             if (distance <= DentDistance)
             {
@@ -54,19 +53,19 @@ namespace KerbalKrashSystem
                 transform.y = UnityEngine.Random.Range(rangeMin.y, rangeMax.y) / tolerance;
                 transform.z = UnityEngine.Random.Range(rangeMin.z, rangeMax.z) / tolerance;
 
-                foreach (MeshFilter meshFilter in vertexDictionary.Keys.ToList())
+                foreach (int meshFilter in vertexDictionary.Keys.ToList())
                 {
-                    Vector3[] vertices = meshFilter.mesh.vertices;
+                    Vector3[] vertices = filterList[meshFilter].mesh.vertices;
                     foreach (int i in vertexDictionary[meshFilter])
                     {
-                        Vector3 worldVertex = meshFilter.transform.TransformPoint(vertices[i]); //Transform the point of contact into the world reference frame.
+                        Vector3 worldVertex = filterList[meshFilter].transform.TransformPoint(vertices[i]); //Transform the point of contact into the world reference frame.
                         
                         worldVertex += transform;
 
                         //Transform the vertex from the world's frame of reference to the local frame of reference and overwrite the existing vertex.
-                        vertices[i] = meshFilter.transform.InverseTransformPoint(worldVertex);
+                        vertices[i] = filterList[meshFilter].transform.InverseTransformPoint(worldVertex);
                     }
-                    meshFilter.mesh.vertices = vertices;
+                    filterList[meshFilter].mesh.vertices = vertices;
                 }
             }
         }
