@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
@@ -81,6 +82,11 @@ namespace KerbalKrashSystem
         protected float DentDistance = 1.25f;
 
         /// <summary>
+        /// grouping distance from vertex to vertex.
+        /// </summary>
+        protected float GroupDistance = .05f;
+
+        /// <summary>
         /// This value scales the minimum random damage (based on the krash velocity) down by this amount.
         /// Default value is 30.0f.
         /// </summary>
@@ -102,6 +108,8 @@ namespace KerbalKrashSystem
         #endregion
         #endregion
 
+        List<VertexGroup> vGroups;
+
         #region Methods
         /// <summary>
         /// Apply krash to all meshes in this part.
@@ -110,43 +118,10 @@ namespace KerbalKrashSystem
         private void ApplyKrash(Krash krash)
         {
             Vector3 relativeVelocity = part.transform.TransformDirection(krash.RelativeVelocity); //Transform the direction of the collision to the world reference frame.
-
-            foreach (MeshFilter meshFilter in gameObject.GetComponentsInChildren(typeof(MeshFilter))) //Apply deformation to every mesh in this part.
+            
+            foreach (VertexGroup group in vGroups)
             {
-                Mesh mesh = meshFilter.mesh;
-
-                if (mesh == null) 
-                    continue; //Unable to apply damage on invalid mesh.
-
-                Vector3[] vertices = mesh.vertices; //Save all vertices from the mesh in a temporary local variable (speed increase).
-
-                for (int i = 0; i < vertices.Length; i++)
-                {
-                    Vector3 worldVertex = meshFilter.transform.TransformPoint(vertices[i]); //Transform the point of contact into the world reference frame.
-                    float distance = Vector3.Distance(worldVertex, part.transform.TransformPoint(krash.ContactPoint)); //Get the distance from the vertex to the position of the krash.
-
-                    if (distance > DentDistance) 
-                        continue; //Don't apply damage to a vertex which is too far away.
-
-                    //Apply random damage based on the relative velocity.
-                    worldVertex.x += Random.Range(relativeVelocity.x / RandomMinDivider, relativeVelocity.x / RandomMaxDivider) / (part.crashTolerance / Malleability);
-                    worldVertex.y += Random.Range(relativeVelocity.y / RandomMinDivider, relativeVelocity.y / RandomMaxDivider) / (part.crashTolerance / Malleability);
-                    worldVertex.z += Random.Range(relativeVelocity.z / RandomMinDivider, relativeVelocity.z / RandomMaxDivider) / (part.crashTolerance / Malleability);
-
-                    //Transform the vertex from the world's frame of reference to the local frame of reference and overwrite the existing vertex.
-                    vertices[i] = meshFilter.transform.InverseTransformPoint(worldVertex); 
-                }
-
-                mesh.vertices = vertices;
-
-                #region Experimental
-                //if (part.Modules.Contains("ModuleEnginesFX") //For some reason ModuleEnginesFX-engines sink into the terrain when updating collider mesh.
-                //    || part.collider == null) 
-                //    continue;
-
-                //((MeshCollider) (part.collider)).sharedMesh = null;
-                //((MeshCollider) (part.collider)).sharedMesh = mesh;
-                #endregion
+                group.Deform(relativeVelocity / RandomMinDivider, relativeVelocity / RandomMaxDivider , part.crashTolerance / Malleability, part.transform.TransformPoint(krash.ContactPoint), DentDistance);
             }
 
             //Fire "DamageReceived" event.
@@ -164,8 +139,55 @@ namespace KerbalKrashSystem
 
             OriginalCrashTolerance = part.crashTolerance;
             ToleranceScaling = ToleranceScaling;
+            InitVertexGroups();
 
             OnEnabled();
+        }
+
+        private void InitVertexGroups()
+        {
+            vGroups = new List<VertexGroup>();
+            foreach (MeshFilter meshFilter in gameObject.GetComponentsInChildren(typeof(MeshFilter))) //Apply deformation to every mesh in this part.
+            {
+                Mesh mesh = meshFilter.mesh;
+
+                if (mesh == null)
+                    continue; //Unable to apply damage on invalid mesh.
+
+                Vector3[] vertices = mesh.vertices; //Save all vertices from the mesh in a temporary local variable (speed increase).
+
+                for (int i = 0; i < vertices.Length; i++)
+                {
+                    Vector3 worldVertex = meshFilter.transform.TransformPoint(vertices[i]); //Transform the point of contact into the world reference frame.
+                    float minDistance = float.MaxValue;
+                    VertexGroup minGroup = null;
+                    foreach (VertexGroup group in vGroups)
+                    {
+                        float distance = Vector3.Distance(worldVertex, group.Center); //Get the distance from the vertex to the position of the krash.
+
+                        if (distance < GroupDistance && distance < minDistance)
+                        {
+                            minDistance = distance;
+                            minGroup = group;
+                        }
+                    }
+                    if (minGroup == null)
+                    {
+                        minGroup = new VertexGroup(worldVertex, meshFilter);
+                        vGroups.Add(minGroup);
+                    }
+                    minGroup.AddVertex(meshFilter, i);
+                }
+
+                #region Experimental
+                //if (part.Modules.Contains("ModuleEnginesFX") //For some reason ModuleEnginesFX-engines sink into the terrain when updating collider mesh.
+                //    || part.collider == null) 
+                //    continue;
+
+                //((MeshCollider) (part.collider)).sharedMesh = null;
+                //((MeshCollider) (part.collider)).sharedMesh = mesh;
+                #endregion
+            }
         }
 
         private void OnDisable()
@@ -262,7 +284,7 @@ namespace KerbalKrashSystem
             //No need to load krashes when not in Flight Scene or non-existent parts/vessels.
             if (!HighLogic.LoadedSceneIsFlight || part == null || part.vessel == null)
                 return;
-
+            
             //Clear damage and krashes.
             Damage = 0;
             _krashes = new List<Krash>();
@@ -295,6 +317,7 @@ namespace KerbalKrashSystem
                 return;
 
             Debug.Log("[KerbalKrashSystem] Applied " + _krashes.Count + " krashes for part ID: " + part.flightID);
+
         }
         #endregion
         #endregion
