@@ -247,7 +247,7 @@ namespace KerbalKrashSystem
                 krashNode.AddValue("ContactPoint.z", krash.ContactPoint.z);
             }
 
-            Debug.Log("[KerbalKrashSystem] Saved ".Append(_krashes.Count, " krashes for part ID: ", part.flightID));
+            Debug.Log("[KerbalKrashSystem] Saved " + _krashes.Count +  " krashes for part ID: " + part.flightID);
         }
         #endregion
 
@@ -293,10 +293,8 @@ namespace KerbalKrashSystem
                 ApplyKrash(krash);
             }
 
-            if (_krashes.Count <= 0)
-                return;
-
-            Debug.Log("[KerbalKrashSystem] Applied ".Append(_krashes.Count, " krashes for part ID: ", part.flightID));
+            if (_krashes.Count > 0)
+                Debug.Log("[KerbalKrashSystem] Applied " + _krashes.Count + " krashes for part ID: " + part.flightID);
         }
         #endregion
         #endregion
