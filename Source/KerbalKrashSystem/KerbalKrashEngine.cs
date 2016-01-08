@@ -1,6 +1,4 @@
-﻿using UnityEngine;
-
-namespace KerbalKrashSystem
+﻿namespace KerbalKrashSystem
 {
     public class ModuleKerbalKrashEngine : KerbalKrashGlobal
     {
@@ -11,8 +9,8 @@ namespace KerbalKrashSystem
 
         protected override void OnEnabled()
         {
-            base.ToleranceScaling = 10.0f;
-            base.Malleability = 4.0f;
+            base.ToleranceScaling = 8.0f;
+            base.Malleability = 2.0f;
 
             _engine = (ModuleEngines)part.GetComponent(typeof(ModuleEngines));
             _originalHeatProduction = _engine.heatProduction;

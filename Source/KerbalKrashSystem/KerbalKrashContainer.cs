@@ -8,22 +8,23 @@ namespace KerbalKrashSystem
 
         protected override void OnEnabled()
         {
+            base.ToleranceScaling = 5.0f;
             base.Malleability = 2.0f;
         }
 
         protected void FixedUpdate()
         {
-            if (Damage <= 0) 
+            if (Damage <= 0)
                 return;
 
-            foreach(PartResource resource in part.Resources)
+            foreach (PartResource resource in part.Resources)
             {
-                if (resource.amount <= 0.0) 
+                if (resource.amount <= 0.0)
                     continue;
 
                 resource.amount -= Damage * Time.deltaTime * TimeWarp.CurrentRate * FlowScaling;
 
-                if (resource.amount <= 0.0) 
+                if (resource.amount <= 0.0)
                     resource.amount = 0.0;
             }
         }

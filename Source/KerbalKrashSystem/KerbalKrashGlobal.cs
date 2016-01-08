@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -39,12 +38,12 @@ namespace KerbalKrashSystem
         /// <summary>
         /// Value indicating the damage percentage of the part.
         /// </summary>
-        [KSPField(guiName = "Damage", isPersistant = false, guiActive = true, guiActiveEditor = false, guiFormat = "P")] 
+        [KSPField(guiName = "Damage", isPersistant = false, guiActive = true, guiActiveEditor = false, guiFormat = "P")]
         public float Damage;
         #endregion
 
         #region Protected fields
-        private float _toleranceScaling = 5.0f;
+        private float _toleranceScaling = 1.0f;
         /// <summary>
         /// Value indicating the scaling of the krash tolerance of the part.
         /// Tolerances are scaled to create a margin for damaging instead of exploding.
@@ -102,6 +101,7 @@ namespace KerbalKrashSystem
         #endregion
         #endregion
 
+
         #region Methods
         /// <summary>
         /// Apply krash to all meshes in this part.
@@ -115,7 +115,7 @@ namespace KerbalKrashSystem
             {
                 Mesh mesh = meshFilter.mesh;
 
-                if (mesh == null) 
+                if (mesh == null)
                     continue; //Unable to apply damage on invalid mesh.
 
                 Vector3[] vertices = mesh.vertices; //Save all vertices from the mesh in a temporary local variable (speed increase).
@@ -125,16 +125,16 @@ namespace KerbalKrashSystem
                     Vector3 worldVertex = meshFilter.transform.TransformPoint(vertices[i]); //Transform the point of contact into the world reference frame.
                     float distance = Vector3.Distance(worldVertex, part.transform.TransformPoint(krash.ContactPoint)); //Get the distance from the vertex to the position of the krash.
 
-                    if (distance > DentDistance) 
+                    if (distance > DentDistance)
                         continue; //Don't apply damage to a vertex which is too far away.
 
                     //Apply random damage based on the relative velocity.
-                    worldVertex.x += Random.Range(relativeVelocity.x / RandomMinDivider, relativeVelocity.x / RandomMaxDivider) / (part.crashTolerance / Malleability);
-                    worldVertex.y += Random.Range(relativeVelocity.y / RandomMinDivider, relativeVelocity.y / RandomMaxDivider) / (part.crashTolerance / Malleability);
-                    worldVertex.z += Random.Range(relativeVelocity.z / RandomMinDivider, relativeVelocity.z / RandomMaxDivider) / (part.crashTolerance / Malleability);
+                    worldVertex.x += Mathf.PerlinNoise(worldVertex.x, 0.0f) * Random.Range(relativeVelocity.x / RandomMinDivider, relativeVelocity.x / RandomMaxDivider) / (part.crashTolerance / Malleability / (Mathf.Sqrt(part.partInfo.partSize) - 1.0f));
+                    worldVertex.y += Mathf.PerlinNoise(worldVertex.y, 0.0f) * Random.Range(relativeVelocity.y / RandomMinDivider, relativeVelocity.y / RandomMaxDivider) / (part.crashTolerance / Malleability / (Mathf.Sqrt(part.partInfo.partSize) - 1.0f));
+                    worldVertex.z += Mathf.PerlinNoise(worldVertex.z, 0.0f) * Random.Range(relativeVelocity.z / RandomMinDivider, relativeVelocity.z / RandomMaxDivider) / (part.crashTolerance / Malleability / (Mathf.Sqrt(part.partInfo.partSize) - 1.0f));
 
                     //Transform the vertex from the world's frame of reference to the local frame of reference and overwrite the existing vertex.
-                    vertices[i] = meshFilter.transform.InverseTransformPoint(worldVertex); 
+                    vertices[i] = meshFilter.transform.InverseTransformPoint(worldVertex);
                 }
 
                 mesh.vertices = vertices;
@@ -151,15 +151,15 @@ namespace KerbalKrashSystem
 
             //Fire "DamageReceived" event.
             if (DamageReceived != null)
-                DamageReceived(this, Damage); 
+                DamageReceived(this, Damage);
         }
         #endregion
-        
+
         #region Events/Callbacks
         #region OnEnable(d)/Disable(d)
         private void OnEnable()
         {
-            if (!HighLogic.LoadedSceneIsFlight) 
+            if (!HighLogic.LoadedSceneIsFlight)
                 return; //Only do stuff when in Flight Scene.
 
             OriginalCrashTolerance = part.crashTolerance;
@@ -191,24 +191,25 @@ namespace KerbalKrashSystem
         /// <param name="collision">Collision object containing information about the collision.</param>
         protected virtual void OnCollisionEnter(Collision collision)
         {
+            Debug.Log(gameObject);
             //Only receive damage if part exists and relative velocity is greater than the original tolerance divided malleability of the part.
             if (part == null || collision.relativeVelocity.magnitude <= (OriginalCrashTolerance / Malleability))
-                return; 
+                return;
 
             //Damage "percentage" per axis. 
             Damage += collision.relativeVelocity.magnitude / part.crashTolerance;
 
             //No need to do anything if the damage is neglible.
-            if (Damage <= 0) 
-                return; 
+            if (Damage <= 0)
+                return;
 
             //First krash of this part.
-            if(_krashes == null) 
+            if (_krashes == null)
                 _krashes = new List<Krash>();
 
             Krash krash = new Krash
             {
-                //Transform the point of contact into the reference frame of the part. 
+                //Transform the velocity of the collision into the reference frame of the part. 
                 RelativeVelocity = part.transform.InverseTransformDirection(collision.relativeVelocity),
 
                 //Transform the direction of the collision to the reference frame of the part.
@@ -246,7 +247,7 @@ namespace KerbalKrashSystem
                 krashNode.AddValue("ContactPoint.z", krash.ContactPoint.z);
             }
 
-            Debug.Log("[KerbalKrashSystem] Saved " + _krashes.Count + " krashes for part ID: " + part.flightID);
+            Debug.Log("[KerbalKrashSystem] Saved ".Append(_krashes.Count, " krashes for part ID: ", part.flightID));
         }
         #endregion
 
@@ -274,7 +275,7 @@ namespace KerbalKrashSystem
 
                 Vector3 relativeVelocity = new Vector3(float.Parse(cn.GetValue("RelativeVelocity.x")), float.Parse(cn.GetValue("RelativeVelocity.y")), float.Parse(cn.GetValue("RelativeVelocity.z")));
                 Vector3 contactPoint = new Vector3(float.Parse(cn.GetValue("ContactPoint.x")), float.Parse(cn.GetValue("ContactPoint.y")), float.Parse(cn.GetValue("ContactPoint.z")));
-                
+
                 Krash krash = new Krash
                 {
                     //Load the relative velocity of the saved krash.
@@ -284,17 +285,18 @@ namespace KerbalKrashSystem
                     ContactPoint = contactPoint,
                 };
 
+                relativeVelocity = part.transform.TransformDirection(relativeVelocity);
                 Damage += relativeVelocity.magnitude / part.crashTolerance;
 
                 _krashes.Add(krash);
-                
+
                 ApplyKrash(krash);
             }
 
             if (_krashes.Count <= 0)
                 return;
 
-            Debug.Log("[KerbalKrashSystem] Applied " + _krashes.Count + " krashes for part ID: " + part.flightID);
+            Debug.Log("[KerbalKrashSystem] Applied ".Append(_krashes.Count, " krashes for part ID: ", part.flightID));
         }
         #endregion
         #endregion
