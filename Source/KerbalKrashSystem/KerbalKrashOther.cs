@@ -1,11 +1,13 @@
-﻿namespace KerbalKrashSystem
+﻿using UnityEngine;
+
+namespace KerbalKrashSystem
 {
     public class ModuleKerbalKrashOther : KerbalKrashGlobal
     {
         protected override void OnEnabled()
         {
             base.ToleranceScaling = 2.0f;
-            base.Malleability = 0.5f;
+            base.Malleability = 1.0f;
 
             DamageReceived += ModuleKerbalKrashOther_DamageReceived;
         }

@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿//Do not use Linq, KSP doesn't like Linq.
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -191,10 +192,17 @@ namespace KerbalKrashSystem
         /// <param name="collision">Collision object containing information about the collision.</param>
         protected virtual void OnCollisionEnter(Collision collision)
         {
-            Debug.Log(gameObject);
             //Only receive damage if part exists and relative velocity is greater than the original tolerance divided malleability of the part.
             if (part == null || collision.relativeVelocity.magnitude <= (OriginalCrashTolerance / Malleability))
                 return;
+
+            //TODO: Temporary fix.
+            foreach (ContactPoint contactPoint in collision.contacts)
+            {
+                if (contactPoint.thisCollider is WheelCollider || contactPoint.otherCollider is WheelCollider)
+                    return;
+            }
+
 
             //Damage "percentage" per axis. 
             Damage += collision.relativeVelocity.magnitude / part.crashTolerance;
@@ -247,7 +255,9 @@ namespace KerbalKrashSystem
                 krashNode.AddValue("ContactPoint.z", krash.ContactPoint.z);
             }
 
-            Debug.Log("[KerbalKrashSystem] Saved " + _krashes.Count +  " krashes for part ID: " + part.flightID);
+            #if DEBUG
+                Debug.Log("[KerbalKrashSystem] Saved " + _krashes.Count +  " krashes for part ID: " + part.flightID);
+            #endif
         }
         #endregion
 
@@ -293,8 +303,10 @@ namespace KerbalKrashSystem
                 ApplyKrash(krash);
             }
 
+            #if DEBUG
             if (_krashes.Count > 0)
                 Debug.Log("[KerbalKrashSystem] Applied " + _krashes.Count + " krashes for part ID: " + part.flightID);
+            #endif
         }
         #endregion
         #endregion
