@@ -41,9 +41,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>D:\Steam\SteamApps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KerbalKrashSystem.dll</HintPath>
     </Reference>
-    <Reference Include="KIS">
-      <HintPath>..\..\..\..\..\Downloads\KIS_v1.2.3 (2)\GameData\KIS\Plugins\KIS.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
