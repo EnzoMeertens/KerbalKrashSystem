@@ -145,46 +145,8 @@ namespace KerbalKrashSystem
             MeshFilter[] meshList = part.FindModelComponents<MeshFilter>();
             foreach (VertexGroup group in vGroups)
             {
-                group.Deform(meshList, relativeVelocity / RandomMinDivider, relativeVelocity / RandomMaxDivider, part.crashTolerance / Malleability, worldPosContact, DentDistance);
-            }
-
-            foreach (MeshFilter meshFilter in gameObject.GetComponentsInChildren(typeof(MeshFilter))) //Apply deformation to every mesh in this part.
-            {
-                Mesh mesh = meshFilter.mesh;
-
-                if (mesh == null)
-                    continue; //Unable to apply damage on invalid mesh.
-
-                Vector3[] vertices = mesh.vertices; //Save all vertices from the mesh in a temporary local variable (speed increase).
-
-                for (int i = 0; i < vertices.Length; i++)
-                {
-                    Vector3 worldVertex = meshFilter.transform.TransformPoint(vertices[i]); //Transform the point of contact into the world reference frame.
-                    float distance = Vector3.Distance(worldVertex, part.transform.TransformPoint(krash.ContactPoint)); //Get the distance from the vertex to the position of the krash.
-
-                    if (distance > DentDistance)
-                        continue; //Don't apply damage to a vertex which is too far away.
-
-                    //Remove random damage based on the saved Krash.
-                    worldVertex.x += (relativeVelocity.x / (part.partInfo.partSize * 2) / (part.crashTolerance / Malleability)) * (inverse ? -1 : 1);
-                    worldVertex.y += (relativeVelocity.y / (part.partInfo.partSize * 2) / (part.crashTolerance / Malleability)) * (inverse ? -1 : 1);
-                    worldVertex.z += (relativeVelocity.z / (part.partInfo.partSize * 2) / (part.crashTolerance / Malleability)) * (inverse ? -1 : 1);
-
-
-                    //Transform the vertex from the world's frame of reference to the local frame of reference and overwrite the existing vertex.
-                    vertices[i] = meshFilter.transform.InverseTransformPoint(worldVertex);
-                }
-
-                mesh.vertices = vertices;
-
-                #region Experimental
-                //if (part.Modules.Contains("ModuleEnginesFX") //For some reason ModuleEnginesFX-engines sink into the terrain when updating collider mesh.
-                //    || part.collider == null) 
-                //    continue;
-
-                //((MeshCollider) (part.collider)).sharedMesh = null;
-                //((MeshCollider) (part.collider)).sharedMesh = mesh;
-                #endregion
+                Vector3 transform = (relativeVelocity/ (part.partInfo.partSize * 2) / (part.crashTolerance / Malleability)) * (inverse ? -1 : 1);
+                group.Deform(meshList, transform, part.crashTolerance / Malleability, worldPosContact, DentDistance);
             }
 
             //Fire "DamageReceived" event.
@@ -397,4 +359,5 @@ namespace KerbalKrashSystem
         #endregion
         #endregion
     }
+    #endregion
 }

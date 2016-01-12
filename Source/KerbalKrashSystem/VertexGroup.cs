@@ -41,18 +41,12 @@ namespace KerbalKrashSystem
             indexList.Add(i);
         }
 
-        internal void Deform(MeshFilter[] filterList, Vector3 rangeMin, Vector3 rangeMax, float tolerance, Vector4 contactPoint, float DentDistance)
+        internal void Deform(MeshFilter[] filterList, Vector3 transform, float tolerance, Vector4 contactPoint, float DentDistance)
         {
             Vector3 worldCenter = Center(filterList);
             float distance = Vector3.Distance(worldCenter, contactPoint); //Get the distance from the vertex to the position of the krash.
             if (distance <= DentDistance)
             {
-                Vector3 transform;
-
-                transform.x = UnityEngine.Random.Range(rangeMin.x, rangeMax.x) / tolerance;
-                transform.y = UnityEngine.Random.Range(rangeMin.y, rangeMax.y) / tolerance;
-                transform.z = UnityEngine.Random.Range(rangeMin.z, rangeMax.z) / tolerance;
-
                 foreach (int meshFilter in vertexDictionary.Keys.ToList())
                 {
                     Vector3[] vertices = filterList[meshFilter].mesh.vertices;
