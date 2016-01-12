@@ -40,13 +40,14 @@ namespace KerbalKrashSystem
             }
             indexList.Add(i);
         }
-
+        
         internal void Deform(MeshFilter[] filterList, Vector3 transform, float tolerance, Vector4 contactPoint, float DentDistance)
         {
             Vector3 worldCenter = Center(filterList);
             float distance = Vector3.Distance(worldCenter, contactPoint); //Get the distance from the vertex to the position of the krash.
             if (distance <= DentDistance)
             {
+
                 foreach (int meshFilter in vertexDictionary.Keys.ToList())
                 {
                     Vector3[] vertices = filterList[meshFilter].mesh.vertices;

@@ -128,6 +128,8 @@ namespace KerbalKrashSystem
         
         List<VertexGroup> vGroups;
 
+        List<VertexGroup> vGroups;
+
         #region Methods
 
         /// <summary>
