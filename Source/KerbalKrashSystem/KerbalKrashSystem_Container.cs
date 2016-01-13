@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace KerbalKrashSystem
+namespace KKS
 {
-    public class ModuleKerbalKrashContainer : KerbalKrashGlobal
+    public class ModuleKerbalKrashContainer : KerbalKrashSystem
     {
         public float FlowScaling = 5.0f;
 

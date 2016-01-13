@@ -1,8 +1,8 @@
 ﻿using UnityEngine;
 
-namespace KerbalKrashSystem
+namespace KKS
 {
-    public class ModuleKerbalKrashOther : KerbalKrashGlobal
+    public class ModuleKerbalKrashOther : KerbalKrashSystem
     {
         protected override void OnEnabled()
         {
@@ -17,7 +17,7 @@ namespace KerbalKrashSystem
             DamageReceived -= ModuleKerbalKrashOther_DamageReceived;
         }
 
-        private void ModuleKerbalKrashOther_DamageReceived(KerbalKrashGlobal sender, float e)
+        private void ModuleKerbalKrashOther_DamageReceived(KerbalKrashSystem sender, float e)
         {
             if (Damage > 1)
                 part.explode();

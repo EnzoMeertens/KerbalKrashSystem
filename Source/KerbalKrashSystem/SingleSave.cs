@@ -2,7 +2,7 @@
 using KSP.IO;
 using UnityEngine;
 
-namespace KerbalKrashSystem
+namespace KKS
 {
     public class SingleSave
     {
@@ -21,7 +21,7 @@ namespace KerbalKrashSystem
 
         private SingleSave()
         {
-            Configuration = PluginConfiguration.CreateForType<KerbalKrashGlobal>();
+            Configuration = PluginConfiguration.CreateForType<KerbalKrashSystem>();
             Configuration.load();
 
             Debug.Log("[KerbalKrashSystem] SingleSave instance loaded.");

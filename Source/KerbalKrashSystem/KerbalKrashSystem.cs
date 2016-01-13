@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace KerbalKrashSystem
+namespace KKS
 {
-    public delegate void DamageReceivedEvent(KerbalKrashGlobal sender, float damage);
-    public delegate void DamageRepairedEvent(KerbalKrashGlobal sender, float damage);
+    public delegate void DamageReceivedEvent(KerbalKrashSystem sender, float damage);
+    public delegate void DamageRepairedEvent(KerbalKrashSystem sender, float damage);
 
-    public abstract class KerbalKrashGlobal : PartModule
+    public abstract class KerbalKrashSystem : PartModule
     {
         #region Structs
         #region Krash
@@ -107,23 +107,11 @@ namespace KerbalKrashSystem
 
         #region Methods
         /// <summary>
-        /// Repair this part using the inverse function on the krash.
-        /// </summary>
-        /// <param name="krash">Krash to apply.</param>
-        public void RepairKrash(Krash krash)
-        {
-            ApplyKrash(krash, true);
-
-            if (DamageRepaired != null)
-                DamageRepaired(this, Damage);
-        }
-
-        /// <summary>
         /// Apply krash to all meshes in this part.
         /// </summary>
         /// <param name="krash">Krash to apply.</param>
         /// <param name="inverse">Apply or undo krash.</param>
-        protected void ApplyKrash(Krash krash, bool inverse = false)
+        public void ApplyKrash(Krash krash, bool inverse = false)
         {
             Vector3 relativeVelocity = part.transform.TransformDirection(krash.RelativeVelocity); //Transform the direction of the collision to the world reference frame.
 
@@ -166,6 +154,14 @@ namespace KerbalKrashSystem
                 //((MeshCollider) (part.collider)).sharedMesh = null;
                 //((MeshCollider) (part.collider)).sharedMesh = mesh;
                 #endregion
+            }
+
+            if (inverse)
+            {
+                //Fire "DamageRepaired" event.
+                if (DamageRepaired != null)
+                    DamageRepaired(this, Damage);
+                return;
             }
 
             //Fire "DamageReceived" event.

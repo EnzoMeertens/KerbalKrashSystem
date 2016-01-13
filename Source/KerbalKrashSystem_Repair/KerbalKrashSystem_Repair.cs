@@ -1,14 +1,17 @@
-﻿using KerbalKrashSystem;
+﻿using KKS;
 
 namespace KerbalKrashSystem_Repair
 {
     public class ModuleKerbalKrashRepair : PartModule
     {
-        private KerbalKrashGlobal _kerbalKrash;
+        private KerbalKrashSystem _kerbalKrash;
 
+        /// <summary>
+        /// Called when this part gets enabled.
+        /// </summary>
         private void OnEnable()
         {
-            _kerbalKrash = part.GetComponent<KerbalKrashGlobal>();
+            _kerbalKrash = part.GetComponent<KerbalKrashSystem>();
         }
 
         /// <summary>
@@ -20,7 +23,7 @@ namespace KerbalKrashSystem_Repair
             if (_kerbalKrash.Krashes.Count == 0)
                 return; //No krashes to repair.
 
-            _kerbalKrash.RepairKrash(_kerbalKrash.Krashes[_kerbalKrash.Krashes.Count - 1]);
+            _kerbalKrash.ApplyKrash(_kerbalKrash.Krashes[_kerbalKrash.Krashes.Count - 1], true);
 
             _kerbalKrash.Krashes.Remove(_kerbalKrash.Krashes[_kerbalKrash.Krashes.Count - 1]);
         }

@@ -1,6 +1,6 @@
-﻿namespace KerbalKrashSystem
+﻿namespace KKS
 {
-    public class ModuleKerbalKrashCommand : KerbalKrashGlobal
+    public class ModuleKerbalKrashCommand : KerbalKrashSystem
     {
         protected override void OnEnabled()
         {
