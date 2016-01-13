@@ -52,7 +52,6 @@
     <Compile Include="KerbalKrashSystem_Command.cs" />
     <Compile Include="KerbalKrashSystem_Other.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SingleSave.cs" />
     <Compile Include="VisualDebugLine.cs" />
     <Compile Include="VisualDebugPoint.cs" />
   </ItemGroup>

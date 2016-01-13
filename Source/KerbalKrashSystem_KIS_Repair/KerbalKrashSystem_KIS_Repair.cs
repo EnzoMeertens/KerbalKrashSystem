@@ -15,16 +15,26 @@ namespace KerbalKrashSystem_KIS_Repair
         {
             _kerbalKrash = part.GetComponent<KerbalKrashSystem>();
 
+            _kerbalKrash.DamageReceived += _kerbalKrash_DamageReceived;
+            _kerbalKrash.DamageRepaired += _kerbalKrash_DamageReceived;
+
             KerbalKrashSystem_KIS_Helper.EquipmentChanged += KerbalKrashSystem_KIS_Helper_EquipmentChanged;
         }
-
 
         /// <summary>
         /// Called everytime the part is disabled.
         /// </summary>
         private void OnDisable()
         {
+            _kerbalKrash.DamageReceived -= _kerbalKrash_DamageReceived;
+            _kerbalKrash.DamageRepaired -= _kerbalKrash_DamageReceived;
+
             KerbalKrashSystem_KIS_Helper.EquipmentChanged -= KerbalKrashSystem_KIS_Helper_EquipmentChanged;
+        }
+
+        void _kerbalKrash_DamageReceived(KerbalKrashSystem sender, float damage)
+        {
+            Events["Repair"].guiName = "Repair (" + damage.ToString("P") + ")";
         }
 
         /// <summary>
@@ -55,12 +65,24 @@ namespace KerbalKrashSystem_KIS_Repair
         [KSPEvent(guiName = "Repair", guiActive = false, externalToEVAOnly = true, guiActiveEditor = false, active = true, guiActiveUnfocused = true, unfocusedRange = 3.0f)]
         public void Repair()
         {
+            //No krashes to repair.
             if (_kerbalKrash.Krashes.Count == 0)
-                return; //No krashes to repair.
+            {
+                ScreenMessages.PostScreenMessage("No damage to repair!", 4, ScreenMessageStyle.UPPER_CENTER);
+                return; 
+            }
 
-            _kerbalKrash.ApplyKrash(_kerbalKrash.Krashes[_kerbalKrash.Krashes.Count - 1], true);
+            //Fully repair the part.
+            _kerbalKrash.Repair();
 
-            _kerbalKrash.Krashes.Remove(_kerbalKrash.Krashes[_kerbalKrash.Krashes.Count - 1]);
+            //Remove the last krash.
+            _kerbalKrash.Krashes.RemoveAt(_kerbalKrash.Krashes.Count - 1);
+
+            //Apply all remaining krashes.
+            foreach (KerbalKrashSystem.Krash krash in _kerbalKrash.Krashes)
+                _kerbalKrash.ApplyKrash(krash);
+
+            ScreenMessages.PostScreenMessage("Repaired to " + _kerbalKrash.Damage.ToString("P"), 4, ScreenMessageStyle.UPPER_CENTER);
         }
     }
 }

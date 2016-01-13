@@ -107,17 +107,35 @@ namespace KKS
 
         #region Methods
         /// <summary>
+        /// Fully repairs this part.
+        /// </summary>
+        public void Repair()
+        {
+            MeshFilter[] currentMeshFilter = part.FindModelComponents<MeshFilter>();
+            MeshFilter[] originalMeshFilter = part.partInfo.partPrefab.FindModelComponents<MeshFilter>();
+
+            if (currentMeshFilter.Length == 0 || originalMeshFilter.Length == 0)
+                return;
+
+            currentMeshFilter[0].mesh = originalMeshFilter[0].mesh;
+
+            Damage = 0;
+
+            if (DamageRepaired != null)
+                DamageRepaired(this, Damage);
+        }
+
+        /// <summary>
         /// Apply krash to all meshes in this part.
         /// </summary>
         /// <param name="krash">Krash to apply.</param>
-        /// <param name="inverse">Apply or undo krash.</param>
-        public void ApplyKrash(Krash krash, bool inverse = false)
+        public void ApplyKrash(Krash krash)
         {
             Vector3 relativeVelocity = part.transform.TransformDirection(krash.RelativeVelocity); //Transform the direction of the collision to the world reference frame.
 
-            Damage += (relativeVelocity.magnitude / part.crashTolerance) * (inverse ? -1 : 1);
+            Damage += (relativeVelocity.magnitude / part.crashTolerance);
 
-            foreach (MeshFilter meshFilter in gameObject.GetComponentsInChildren(typeof(MeshFilter))) //Apply deformation to every mesh in this part.
+            foreach (MeshFilter meshFilter in part.FindModelComponents<MeshFilter>()) //Apply deformation to every mesh in this part.
             {
                 Mesh mesh = meshFilter.mesh;
 
@@ -135,10 +153,9 @@ namespace KKS
                         continue; //Don't apply damage to a vertex which is too far away.
 
                     //Remove random damage based on the saved Krash.
-                    worldVertex.x += (relativeVelocity.x / (part.partInfo.partSize * 2) / (part.crashTolerance / Malleability)) * (inverse ? -1 : 1);
-                    worldVertex.y += (relativeVelocity.y / (part.partInfo.partSize * 2) / (part.crashTolerance / Malleability)) * (inverse ? -1 : 1);
-                    worldVertex.z += (relativeVelocity.z / (part.partInfo.partSize * 2) / (part.crashTolerance / Malleability)) * (inverse ? -1 : 1);
-
+                    worldVertex.x += (relativeVelocity.x / (part.partInfo.partSize * 2) / (part.crashTolerance / Malleability));
+                    worldVertex.y += (relativeVelocity.y / (part.partInfo.partSize * 2) / (part.crashTolerance / Malleability));
+                    worldVertex.z += (relativeVelocity.z / (part.partInfo.partSize * 2) / (part.crashTolerance / Malleability));
 
                     //Transform the vertex from the world's frame of reference to the local frame of reference and overwrite the existing vertex.
                     vertices[i] = meshFilter.transform.InverseTransformPoint(worldVertex);
@@ -154,14 +171,6 @@ namespace KKS
                 //((MeshCollider) (part.collider)).sharedMesh = null;
                 //((MeshCollider) (part.collider)).sharedMesh = mesh;
                 #endregion
-            }
-
-            if (inverse)
-            {
-                //Fire "DamageRepaired" event.
-                if (DamageRepaired != null)
-                    DamageRepaired(this, Damage);
-                return;
             }
 
             //Fire "DamageReceived" event.
