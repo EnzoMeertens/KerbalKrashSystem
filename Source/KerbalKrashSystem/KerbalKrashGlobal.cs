@@ -141,12 +141,15 @@ namespace KerbalKrashSystem
             Vector4 worldPosContact = part.transform.TransformPoint(krash.ContactPoint);
             MeshFilter[] meshList = part.FindModelComponents<MeshFilter>();
 
-            Vector3 transform = (relativeVelocity / (part.partInfo.partSize * 2) / (part.crashTolerance / Malleability)) * (inverse ? -1 : 1);
+            Vector3 transform = (relativeVelocity / (part.partInfo.partSize) / (part.crashTolerance / Malleability)) * (inverse ? -1 : 1);
             foreach (MeshFilter meshFilter in meshList)
             {
                 Vector3 transformT = meshFilter.transform.InverseTransformVector(transform);
                 Vector3 contactPointT = meshFilter.transform.InverseTransformPoint(worldPosContact);
-
+                Vector3 dentDistanceT = meshFilter.transform.TransformDirection(Vector3.one);
+                dentDistanceT = meshFilter.transform.InverseTransformVector(DentDistance*dentDistanceT);
+                dentDistanceT = Vector3.Max(-dentDistanceT, dentDistanceT);
+                Debug.Log("dentDistanceT: "+dentDistanceT.ToString("F4"));
                 Mesh mesh = meshFilter.mesh;
                 if (mesh == null)
                 {
@@ -155,13 +158,19 @@ namespace KerbalKrashSystem
                 Vector3[] vertices = mesh.vertices;
                 for (int v = 0; v < vertices.Length; v++)
                 {
-                    float distance = Vector3.Distance(vertices[v], contactPointT);
-                    if (distance <= DentDistance)
+                    Vector3 distance = vertices[v] - contactPointT;
+                    distance = Vector3.Max(-distance, distance);
+                    distance = dentDistanceT-distance;
+                    
+                    if (distance.x >= 0 && 
+                        distance.y >= 0 && 
+                        distance.z >= 0)
                     {
-                        vertices[v] += transformT;
+                        vertices[v] += Vector3.Scale(distance,transformT);
                     }
                 }
-                meshFilter.mesh.vertices = vertices;
+                mesh.vertices = vertices;
+                meshFilter.mesh = mesh;
             }
 
             //Fire "DamageReceived" event.
