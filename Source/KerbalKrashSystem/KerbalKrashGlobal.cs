@@ -10,7 +10,6 @@ namespace KerbalKrashSystem
 
     public abstract class KerbalKrashGlobal : PartModule
     {
-        private static Dictionary<string, List<VertexGroup>> VertexGroupDictionary = new Dictionary<string, List<VertexGroup>>();
 
         #region Structs
         #region Krash
@@ -124,10 +123,7 @@ namespace KerbalKrashSystem
 
             if (DamageRepaired != null)
                 DamageRepaired(this, Damage);
-        }
-        
-        List<VertexGroup> vGroups;
-        
+        }        
 
         #region Methods
 
@@ -146,14 +142,26 @@ namespace KerbalKrashSystem
             MeshFilter[] meshList = part.FindModelComponents<MeshFilter>();
 
             Vector3 transform = (relativeVelocity / (part.partInfo.partSize * 2) / (part.crashTolerance / Malleability)) * (inverse ? -1 : 1);
-            Vector3[] transforms = new Vector3[meshList.Length];
-            for(int i = 0; i< meshList.Length; i++)
+            foreach (MeshFilter meshFilter in meshList)
             {
-                transforms[i] = meshList[i].transform.InverseTransformVector(transform);
-            }
-            foreach (VertexGroup group in vGroups)
-            {
-                group.Deform(meshList, transforms, worldPosContact, DentDistance);
+                Vector3 transformT = meshFilter.transform.InverseTransformVector(transform);
+                Vector3 contactPointT = meshFilter.transform.InverseTransformPoint(worldPosContact);
+
+                Mesh mesh = meshFilter.mesh;
+                if (mesh == null)
+                {
+                    mesh = meshFilter.sharedMesh;
+                }
+                Vector3[] vertices = mesh.vertices;
+                for (int v = 0; v < vertices.Length; v++)
+                {
+                    float distance = Vector3.Distance(vertices[v], contactPointT);
+                    if (distance <= DentDistance)
+                    {
+                        vertices[v] += transformT;
+                    }
+                }
+                meshFilter.mesh.vertices = vertices;
             }
 
             //Fire "DamageReceived" event.
@@ -171,68 +179,8 @@ namespace KerbalKrashSystem
 
             OriginalCrashTolerance = part.crashTolerance;
             ToleranceScaling = ToleranceScaling;
-            InitVertexGroups();
 
             OnEnabled();
-        }
-
-        internal void InitVertexGroups()
-        {
-            Debug.Log("InitVertexGroups "+part.partInfo.partUrl);
-         //   if (!VertexGroupDictionary.ContainsKey(part.partInfo.partUrl))
-            {
-                vGroups = new List<VertexGroup>();
-                MeshFilter[] meshList = part.FindModelComponents<MeshFilter>();
-                for (int meshIndex = 0; meshIndex < meshList.Length;meshIndex++) //Apply deformation to every mesh in this part.
-                {
-                    Mesh mesh = meshList[meshIndex].mesh;
-
-                    if (mesh == null)
-                    {
-                        mesh = meshList[meshIndex].sharedMesh;
-                    }
-
-                    Vector3[] vertices = mesh.vertices; //Save all vertices from the mesh in a temporary local variable (speed increase).
-
-                    for (int i = 0; i < vertices.Length; i++)
-                    {
-                        Vector3 worldVertex = meshList[meshIndex].transform.TransformPoint(vertices[i]); //Transform the point of contact into the world reference frame.
-                        float minDistance = float.MaxValue;
-                        VertexGroup minGroup = null;
-                        foreach (VertexGroup group in vGroups)
-                        {
-                            float distance = Vector3.Distance(worldVertex, group.Center()); //Get the distance from the vertex to the position of the krash.
-
-                            if (distance < GroupDistance && distance < minDistance)
-                            {
-                                minDistance = distance;
-                                minGroup = group;
-                            }
-                        }
-                        if (minGroup == null)
-                        {
-                            minGroup = new VertexGroup(meshIndex, i, worldVertex);
-                            vGroups.Add(minGroup);
-                        }
-                        minGroup.AddVertex(meshIndex, i);
-                    }
-
-                    #region Experimental
-                    //if (part.Modules.Contains("ModuleEnginesFX") //For some reason ModuleEnginesFX-engines sink into the terrain when updating collider mesh.
-                    //    || part.collider == null) 
-                    //    continue;
-
-                    //((MeshCollider) (part.collider)).sharedMesh = null;
-                    //((MeshCollider) (part.collider)).sharedMesh = mesh;
-                    #endregion
-                    
-                }
-                VertexGroupDictionary[part.partInfo.partUrl] = vGroups;
-            }
-         //   else
-            {
-         //       vGroups = VertexGroupDictionary[part.partInfo.partUrl];
-            }
         }
 
         private void OnDisable()
