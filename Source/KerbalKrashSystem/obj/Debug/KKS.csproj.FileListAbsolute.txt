@@ -1,0 +1,8 @@
+D:\Steam\SteamApps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KerbalKrashSystem.dll
+D:\Steam\SteamApps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KerbalKrashSystem.pdb
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\obj\Debug\KerbalKrashSystem.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\obj\Debug\KerbalKrashSystem.pdb
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\New folder\KerbalKrashSystem\obj\Debug\KKS.csprojResolveAssemblyReference.cache
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\New folder\KerbalKrashSystem\obj\Debug\KerbalKrashSystem.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\New folder\KerbalKrashSystem\obj\Debug\KerbalKrashSystem.pdb
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\obj\Debug\KKS.csprojResolveAssemblyReference.cache

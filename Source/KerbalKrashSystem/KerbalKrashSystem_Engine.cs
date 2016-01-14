@@ -1,6 +1,6 @@
-﻿namespace KerbalKrashSystem
+﻿namespace KKS
 {
-    public class ModuleKerbalKrashEngine : KerbalKrashGlobal
+    public class ModuleKerbalKrashEngine : KerbalKrashSystem
     {
         public float OverheatScaling = 10.0f;
 
@@ -23,7 +23,7 @@
             DamageReceived -= ModuleKerbalKrashEngine_DamageReceived;
         }
 
-        private void ModuleKerbalKrashEngine_DamageReceived(KerbalKrashGlobal sender, float e)
+        private void ModuleKerbalKrashEngine_DamageReceived(KerbalKrashSystem sender, float e)
         {
             _engine.heatProduction = _originalHeatProduction + (float)(part.maxTemp * Damage * OverheatScaling);
         }

@@ -4,22 +4,24 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{C9E72441-4366-42D1-AB8C-7783B93DD81A}</ProjectGuid>
+    <ProjectGuid>{1CF1FE9A-7BBE-4C85-8851-25EF89976F2D}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>KerbalKrashSystem</RootNamespace>
-    <AssemblyName>KerbalKrashSystem</AssemblyName>
-    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
+    <RootNamespace>KerbalKrashSystem_KIS_Repair</RootNamespace>
+    <AssemblyName>KerbalKrashSystem_KIS_Repair</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>D:\Steam\SteamApps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\</OutputPath>
+    <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -28,40 +30,38 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
       <HintPath>D:\Steam\SteamApps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="KerbalKrashSystem">
+      <HintPath>D:\Steam\SteamApps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KerbalKrashSystem.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="KIS">
+      <HintPath>D:\Steam\SteamApps\common\Kerbal Space Program\GameData\KIS\Plugins\KIS.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
       <HintPath>D:\Steam\SteamApps\common\Kerbal Space Program\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <Private>False</Private>
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions.cs" />
-    <Compile Include="KerbalKrashContainer.cs" />
-    <Compile Include="KerbalKrashGlobal.cs" />
-    <Compile Include="KerbalKrashEngine.cs" />
-    <Compile Include="KerbalKrashCommand.cs" />
-    <Compile Include="KerbalKrashOther.cs" />
+    <Compile Include="KerbalKrashSystem_KIS_Helper.cs" />
+    <Compile Include="KerbalKrashSystem_KIS_Repair.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SingleSave.cs" />
-    <Compile Include="VisualDebugLine.cs" />
-    <Compile Include="VisualDebugPoint.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="OldCode.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"D:\Steam\SteamApps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\GenerateMDB.cmd"</PostBuildEvent>
+    <PostBuildEvent>copy KerbalKrashSystem_KIS_Repair.dll "D:\Steam\SteamApps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KerbalKrashSystem_KIS_Repair.dll"
+copy KerbalKrashSystem_KIS_Repair.pdb "D:\Steam\SteamApps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KerbalKrashSystem_KIS_Repair.pdb"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

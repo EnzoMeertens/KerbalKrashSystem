@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace KerbalKrashSystem
+namespace KKS
 {
     class VisualDebugLine : MonoBehaviour
     {

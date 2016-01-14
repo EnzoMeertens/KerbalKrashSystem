@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace KerbalKrashSystem
+namespace KKS
 {
-    public delegate void DamageReceivedEvent(KerbalKrashGlobal sender, float damage);
-    public delegate void DamageRepairedEvent(KerbalKrashGlobal sender, float damage);
+    public delegate void DamageReceivedEvent(KerbalKrashSystem sender, float damage);
+    public delegate void DamageRepairedEvent(KerbalKrashSystem sender, float damage);
 
-    public abstract class KerbalKrashGlobal : PartModule
+    public abstract class KerbalKrashSystem : PartModule
     {
         #region Structs
         #region Krash
@@ -107,12 +107,19 @@ namespace KerbalKrashSystem
 
         #region Methods
         /// <summary>
-        /// Repair this part using the inverse function on the krash.
+        /// Fully repairs this part.
         /// </summary>
-        /// <param name="krash">Krash to apply.</param>
-        public void RepairKrash(Krash krash)
+        public void Repair()
         {
-            ApplyKrash(krash, true);
+            MeshFilter[] currentMeshFilter = part.FindModelComponents<MeshFilter>();
+            MeshFilter[] originalMeshFilter = part.partInfo.partPrefab.FindModelComponents<MeshFilter>();
+
+            if (currentMeshFilter.Length == 0 || originalMeshFilter.Length == 0)
+                return;
+
+            currentMeshFilter[0].mesh = originalMeshFilter[0].mesh;
+
+            Damage = 0;
 
             if (DamageRepaired != null)
                 DamageRepaired(this, Damage);
@@ -122,14 +129,13 @@ namespace KerbalKrashSystem
         /// Apply krash to all meshes in this part.
         /// </summary>
         /// <param name="krash">Krash to apply.</param>
-        /// <param name="inverse">Apply or undo krash.</param>
-        protected void ApplyKrash(Krash krash, bool inverse = false)
+        public void ApplyKrash(Krash krash)
         {
             Vector3 relativeVelocity = part.transform.TransformDirection(krash.RelativeVelocity); //Transform the direction of the collision to the world reference frame.
 
-            Damage += (relativeVelocity.magnitude / part.crashTolerance) * (inverse ? -1 : 1);
+            Damage += (relativeVelocity.magnitude / part.crashTolerance);
 
-            foreach (MeshFilter meshFilter in gameObject.GetComponentsInChildren(typeof(MeshFilter))) //Apply deformation to every mesh in this part.
+            foreach (MeshFilter meshFilter in part.FindModelComponents<MeshFilter>()) //Apply deformation to every mesh in this part.
             {
                 Mesh mesh = meshFilter.mesh;
 
@@ -147,10 +153,9 @@ namespace KerbalKrashSystem
                         continue; //Don't apply damage to a vertex which is too far away.
 
                     //Remove random damage based on the saved Krash.
-                    worldVertex.x += (relativeVelocity.x / (part.partInfo.partSize * 2) / (part.crashTolerance / Malleability)) * (inverse ? -1 : 1);
-                    worldVertex.y += (relativeVelocity.y / (part.partInfo.partSize * 2) / (part.crashTolerance / Malleability)) * (inverse ? -1 : 1);
-                    worldVertex.z += (relativeVelocity.z / (part.partInfo.partSize * 2) / (part.crashTolerance / Malleability)) * (inverse ? -1 : 1);
-
+                    worldVertex.x += (relativeVelocity.x / (part.partInfo.partSize * 2) / (part.crashTolerance / Malleability));
+                    worldVertex.y += (relativeVelocity.y / (part.partInfo.partSize * 2) / (part.crashTolerance / Malleability));
+                    worldVertex.z += (relativeVelocity.z / (part.partInfo.partSize * 2) / (part.crashTolerance / Malleability));
 
                     //Transform the vertex from the world's frame of reference to the local frame of reference and overwrite the existing vertex.
                     vertices[i] = meshFilter.transform.InverseTransformPoint(worldVertex);
