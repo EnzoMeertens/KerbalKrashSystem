@@ -133,8 +133,11 @@ namespace KKS
             {
                 Mesh mesh = meshFilter.mesh;
 
-                if (mesh == null)
+                if (meshFilter.sharedMesh == null)
                     continue;
+
+                if (mesh == null)
+                    mesh = meshFilter.sharedMesh;
 
                 Vector3 transformT = meshFilter.transform.InverseTransformVector(transform);
                 Vector3 contactPointLocal = meshFilter.transform.InverseTransformPoint(worldPosContact);
