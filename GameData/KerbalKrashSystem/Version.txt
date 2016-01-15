@@ -1,6 +1,13 @@
-Version: 0.2
+Version: 0.25
 
 
 
-Author: Enzo Meertens 
+Author: 
+	Enzo Meertens 
 		(https://github.com/EnzoMeertens)
+
+Special thanks to:
+	ialdabaoth 	(http://forum.kerbalspaceprogram.com/index.php?/profile/57270-ialdabaoth/)
+	Sarbian 	(http://forum.kerbalspaceprogram.com/index.php?/profile/57146-sarbian/)
+	rbray89		(http://forum.kerbalspaceprogram.com/index.php?/profile/48847-rbray89/)
+

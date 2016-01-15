@@ -2,7 +2,7 @@
 
 namespace KKS
 {
-    public class ModuleKerbalKrashContainer : KerbalKrashSystem
+    public class ModuleKerbalKrashSystem_Container : KerbalKrashSystem
     {
         public float FlowScaling = 5.0f;
 

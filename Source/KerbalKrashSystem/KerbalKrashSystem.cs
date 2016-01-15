@@ -114,10 +114,10 @@ namespace KKS
             MeshFilter[] currentMeshFilter = part.FindModelComponents<MeshFilter>();
             MeshFilter[] originalMeshFilter = part.partInfo.partPrefab.FindModelComponents<MeshFilter>();
 
-            if (currentMeshFilter.Length == 0 || originalMeshFilter.Length == 0)
-                return;
-
-            currentMeshFilter[0].mesh = originalMeshFilter[0].mesh;
+            for(int i = 0; i < currentMeshFilter.Length; i++)
+            {
+                currentMeshFilter[i].mesh = originalMeshFilter[i].mesh;
+            }
 
             Damage = 0;
 

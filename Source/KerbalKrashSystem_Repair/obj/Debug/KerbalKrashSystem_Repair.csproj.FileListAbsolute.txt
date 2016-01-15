@@ -1,5 +1,15 @@
-C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_Repair\obj\Debug\KerbalKrashSystem_Repair.csprojResolveAssemblyReference.cache
 D:\Steam\SteamApps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KerbalKrashSystem_Repair.dll
 D:\Steam\SteamApps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KerbalKrashSystem_Repair.pdb
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_Repair\obj\Debug\KerbalKrashSystem_Repair.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_Repair\obj\Debug\KerbalKrashSystem_Repair.pdb
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_Repair\bin\Debug\KerbalKrashSystem_Repair.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_Repair\bin\Debug\KerbalKrashSystem_Repair.pdb
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_Repair\bin\Debug\Assembly-CSharp.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_Repair\bin\Debug\KerbalKrashSystem.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_Repair\bin\Debug\UnityEngine.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_Repair\bin\Debug\Assembly-CSharp-firstpass.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_Repair\bin\Debug\TDx.TDxInput.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_Repair\bin\Debug\TrackIRUnity.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_Repair\bin\Debug\Mono.Cecil.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_Repair\bin\Debug\Mono.Security.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_Repair\obj\Debug\KerbalKrashSystem_Repair.csprojResolveAssemblyReference.cache

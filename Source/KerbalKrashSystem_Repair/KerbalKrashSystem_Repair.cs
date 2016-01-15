@@ -2,7 +2,7 @@
 
 namespace KerbalKrashSystem_Repair
 {
-    public class ModuleKerbalKrashRepair : PartModule
+    public class ModuleKerbalKrashSystem_Repair : PartModule
     {
         private KerbalKrashSystem _kerbalKrash;
 
@@ -20,12 +20,27 @@ namespace KerbalKrashSystem_Repair
         [KSPEvent(guiName = "Repair", guiActive = true, externalToEVAOnly = true, guiActiveEditor = false, active = true, guiActiveUnfocused = true, unfocusedRange = 3.0f)]
         public void Repair()
         {
+            //No krashes to repair.
             if (_kerbalKrash.Krashes.Count == 0)
-                return; //No krashes to repair.
+            {
+                ScreenMessages.PostScreenMessage("No damage to repair!", 4, ScreenMessageStyle.UPPER_CENTER);
+                return;
+            }
 
-            _kerbalKrash.ApplyKrash(_kerbalKrash.Krashes[_kerbalKrash.Krashes.Count - 1], true);
+            //Fully repair the part.
+            _kerbalKrash.Repair();
 
-            _kerbalKrash.Krashes.Remove(_kerbalKrash.Krashes[_kerbalKrash.Krashes.Count - 1]);
+            //Remove the last krash.
+            _kerbalKrash.Krashes.RemoveAt(_kerbalKrash.Krashes.Count - 1);
+
+            //Apply all remaining krashes.
+            foreach (KerbalKrashSystem.Krash krash in _kerbalKrash.Krashes)
+                _kerbalKrash.ApplyKrash(krash);
+
+            ScreenMessages.PostScreenMessage("Repaired to " + _kerbalKrash.Damage.ToString("P"), 4, ScreenMessageStyle.UPPER_CENTER);
         }
     }
 }
+
+
+

@@ -1,6 +1,6 @@
 ﻿namespace KKS
 {
-    public class ModuleKerbalKrashEngine : KerbalKrashSystem
+    public class ModuleKerbalKrashSystem_Engine : KerbalKrashSystem
     {
         public float OverheatScaling = 10.0f;
 

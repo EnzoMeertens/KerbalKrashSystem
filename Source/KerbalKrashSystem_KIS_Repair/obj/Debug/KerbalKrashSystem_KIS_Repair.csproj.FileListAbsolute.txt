@@ -14,13 +14,13 @@ C:\Users\Enzo Meertens\documents\visual studio 2013\Projects\KerbalKrashSystem_K
 C:\Users\Enzo Meertens\documents\visual studio 2013\Projects\KerbalKrashSystem_KIS_Repair\KerbalKrashSystem_KIS_Repair\obj\Debug\KerbalKrashSystem_KIS_Repair.csprojResolveAssemblyReference.cache
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_KIS_Repair\bin\Debug\KerbalKrashSystem_KIS_Repair.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_KIS_Repair\bin\Debug\KerbalKrashSystem_KIS_Repair.pdb
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_KIS_Repair\bin\Debug\KerbalKrashSystem.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_KIS_Repair\bin\Debug\KIS.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_KIS_Repair\bin\Debug\Assembly-CSharp-firstpass.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_KIS_Repair\bin\Debug\TDx.TDxInput.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_KIS_Repair\bin\Debug\TrackIRUnity.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_KIS_Repair\bin\Debug\Mono.Cecil.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_KIS_Repair\bin\Debug\Mono.Security.dll
-C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_KIS_Repair\bin\Debug\KIS.pdb
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_KIS_Repair\obj\Debug\KerbalKrashSystem_KIS_Repair.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_KIS_Repair\obj\Debug\KerbalKrashSystem_KIS_Repair.pdb
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_KIS_Repair\obj\Debug\KerbalKrashSystem_KIS_Repair.csprojResolveAssemblyReference.cache

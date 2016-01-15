@@ -2,7 +2,7 @@
 
 namespace KKS
 {
-    public class ModuleKerbalKrashOther : KerbalKrashSystem
+    public class ModuleKerbalKrashSystem_Other : KerbalKrashSystem
     {
         protected override void OnEnabled()
         {
