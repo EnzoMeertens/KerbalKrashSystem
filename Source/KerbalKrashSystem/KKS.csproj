@@ -55,6 +55,9 @@
     <Compile Include="VisualDebugLine.cs" />
     <Compile Include="VisualDebugPoint.cs" />
   </ItemGroup>
+  <ItemGroup>
+    <Content Include="OldCode.txt" />
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>copy KerbalKrashSystem.dll "D:\Steam\SteamApps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KerbalKrashSystem.dll"

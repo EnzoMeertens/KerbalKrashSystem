@@ -90,18 +90,6 @@ namespace KKS
         /// Cut-off distance from contact point to vertex.
         /// </summary>
         protected float DentDistance = 1.25f;
-
-        /// <summary>
-        /// This value scales the minimum random damage (based on the krash velocity) down by this amount.
-        /// Default value is 30.0f.
-        /// </summary>
-        protected float RandomMinDivider = 30.0f;
-
-        /// <summary>
-        /// This value scales the maximum random damage (based on the krash velocity) down by this amount.
-        /// Default value is 2.0f.
-        /// </summary>
-        protected float RandomMaxDivider = 2.0f;
         #endregion
         #endregion
 
@@ -125,52 +113,53 @@ namespace KKS
                 DamageRepaired(this, Damage);
         }
 
+        
         /// <summary>
         /// Apply krash to all meshes in this part.
         /// </summary>
         /// <param name="krash">Krash to apply.</param>
-        public void ApplyKrash(Krash krash)
+        /// <param name="inverse">Apply or undo krash.</param>
+        protected void ApplyKrash(Krash krash)
         {
             Vector3 relativeVelocity = part.transform.TransformDirection(krash.RelativeVelocity); //Transform the direction of the collision to the world reference frame.
 
             Damage += (relativeVelocity.magnitude / part.crashTolerance);
 
-            foreach (MeshFilter meshFilter in part.FindModelComponents<MeshFilter>()) //Apply deformation to every mesh in this part.
+            Vector3 worldPosContact = part.transform.TransformPoint(krash.ContactPoint);
+            MeshFilter[] meshList = part.FindModelComponents<MeshFilter>();
+
+            Vector3 transform = (relativeVelocity / (1f * part.partInfo.partSize) / (part.crashTolerance / Malleability));
+            foreach (MeshFilter meshFilter in meshList)
             {
                 Mesh mesh = meshFilter.mesh;
 
                 if (mesh == null)
-                    continue; //Unable to apply damage on invalid mesh.
+                    continue;
 
-                Vector3[] vertices = mesh.vertices; //Save all vertices from the mesh in a temporary local variable (speed increase).
+                Vector3 transformT = meshFilter.transform.InverseTransformVector(transform);
+                Vector3 contactPointLocal = meshFilter.transform.InverseTransformPoint(worldPosContact);
+                Vector3 dentDistanceLocal = meshFilter.transform.TransformDirection(Vector3.one).normalized;
+                dentDistanceLocal = meshFilter.transform.InverseTransformVector(DentDistance * dentDistanceLocal);
+                dentDistanceLocal = Vector3.Max(-dentDistanceLocal, dentDistanceLocal);
 
+                transformT /= dentDistanceLocal.sqrMagnitude;
+
+                Vector3[] vertices = mesh.vertices;
                 for (int i = 0; i < vertices.Length; i++)
                 {
-                    Vector3 worldVertex = meshFilter.transform.TransformPoint(vertices[i]); //Transform the point of contact into the world reference frame.
-                    float distance = Vector3.Distance(worldVertex, part.transform.TransformPoint(krash.ContactPoint)); //Get the distance from the vertex to the position of the krash.
+                    Vector3 distance = vertices[i] - contactPointLocal;
+                    distance = Vector3.Max(-distance, distance);
+                    distance = dentDistanceLocal - distance;
 
-                    if (distance > DentDistance)
-                        continue; //Don't apply damage to a vertex which is too far away.
+                    if (distance.x < 0 || distance.y < 0 || distance.z < 0)
+                        continue;
 
-                    //Remove random damage based on the saved Krash.
-                    worldVertex.x += (relativeVelocity.x / (part.partInfo.partSize * 2) / (part.crashTolerance / Malleability));
-                    worldVertex.y += (relativeVelocity.y / (part.partInfo.partSize * 2) / (part.crashTolerance / Malleability));
-                    worldVertex.z += (relativeVelocity.z / (part.partInfo.partSize * 2) / (part.crashTolerance / Malleability));
-
-                    //Transform the vertex from the world's frame of reference to the local frame of reference and overwrite the existing vertex.
-                    vertices[i] = meshFilter.transform.InverseTransformPoint(worldVertex);
+                    //look into directional displacement.
+                    vertices[i] += distance.magnitude * transformT;
                 }
 
                 mesh.vertices = vertices;
-
-                #region Experimental
-                //if (part.Modules.Contains("ModuleEnginesFX") //For some reason ModuleEnginesFX-engines sink into the terrain when updating collider mesh.
-                //    || part.collider == null) 
-                //    continue;
-
-                //((MeshCollider) (part.collider)).sharedMesh = null;
-                //((MeshCollider) (part.collider)).sharedMesh = mesh;
-                #endregion
+                meshFilter.mesh = mesh;
             }
 
             //Fire "DamageReceived" event.
