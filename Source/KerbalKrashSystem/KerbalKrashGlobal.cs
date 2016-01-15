@@ -141,15 +141,24 @@ namespace KerbalKrashSystem
             Vector4 worldPosContact = part.transform.TransformPoint(krash.ContactPoint);
             MeshFilter[] meshList = part.FindModelComponents<MeshFilter>();
 
-            Vector3 transform = (relativeVelocity / (part.partInfo.partSize) / (part.crashTolerance / Malleability)) * (inverse ? -1 : 1);
+            Vector3 transform = (relativeVelocity / (2f*part.partInfo.partSize) / (part.crashTolerance / Malleability)) * (inverse ? -1 : 1);
             foreach (MeshFilter meshFilter in meshList)
             {
                 Vector3 transformT = meshFilter.transform.InverseTransformVector(transform);
                 Vector3 contactPointT = meshFilter.transform.InverseTransformPoint(worldPosContact);
-                Vector3 dentDistanceT = meshFilter.transform.TransformDirection(Vector3.one);
+                Vector3 dentDistanceT = meshFilter.transform.TransformDirection(Vector3.one).normalized;
                 dentDistanceT = meshFilter.transform.InverseTransformVector(DentDistance*dentDistanceT);
                 dentDistanceT = Vector3.Max(-dentDistanceT, dentDistanceT);
+                Debug.Log(part.partInfo.partUrl);
                 Debug.Log("dentDistanceT: "+dentDistanceT.ToString("F4"));
+                Vector3 dentDistanceTInv;
+                dentDistanceTInv.x = 1f / dentDistanceT.x;
+                dentDistanceTInv.y = 1f / dentDistanceT.y;
+                dentDistanceTInv.z = 1f / dentDistanceT.z;
+                //transformT = Vector3.Scale(transformT, dentDistanceTInv);
+                transformT /= dentDistanceT.sqrMagnitude;
+
+                Debug.Log("transformT: " + transformT.ToString("F4"));
                 Mesh mesh = meshFilter.mesh;
                 if (mesh == null)
                 {
@@ -166,7 +175,9 @@ namespace KerbalKrashSystem
                         distance.y >= 0 && 
                         distance.z >= 0)
                     {
-                        vertices[v] += Vector3.Scale(distance,transformT);
+                        float mag = distance.sqrMagnitude;
+                        //look into directional displacement.
+                        vertices[v] += mag*transformT;
                     }
                 }
                 mesh.vertices = vertices;
