@@ -16,16 +16,26 @@
             _originalHeatProduction = _engine.heatProduction;
 
             DamageReceived += ModuleKerbalKrashEngine_DamageReceived;
+            DamageRepaired += ModuleKerbalKrashEngine_DamageReceived;
         }
 
         protected override void OnDisabled()
         {
             DamageReceived -= ModuleKerbalKrashEngine_DamageReceived;
+            DamageRepaired -= ModuleKerbalKrashEngine_DamageReceived;
         }
 
-        private void ModuleKerbalKrashEngine_DamageReceived(KerbalKrashSystem sender, float e)
+        /// <summary>
+        /// This event handler function is called when this part gets damaged.
+        /// </summary>
+        /// <param name="sender">Object firing the event.</param>
+        /// <param name="damage">New damage percentage.</param>
+        private void ModuleKerbalKrashEngine_DamageReceived(KerbalKrashSystem sender, float damage)
         {
-            _engine.heatProduction = _originalHeatProduction + (float)(part.maxTemp * Damage * OverheatScaling);
+            //Increase this engine's heat production when damaged.
+            //If damage equals zero, the original heat production will be used.
+            _engine.heatProduction = _originalHeatProduction + (float)(part.maxTemp * damage * OverheatScaling);
         }
     }
 }
+
