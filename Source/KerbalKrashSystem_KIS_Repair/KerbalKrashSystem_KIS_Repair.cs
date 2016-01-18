@@ -62,7 +62,7 @@ namespace KerbalKrashSystem_KIS_Repair
         /// <summary>
         /// Right-click repair button event: repairs the last applied damage.
         /// </summary>
-        [KSPEvent(guiName = "Repair", guiActive = false, externalToEVAOnly = true, guiActiveEditor = false, active = true, guiActiveUnfocused = true, unfocusedRange = 3.0f)]
+        [KSPEvent(guiName = "Repair (0%)", guiActive = false, externalToEVAOnly = true, guiActiveEditor = false, active = true, guiActiveUnfocused = true, unfocusedRange = 3.0f)]
         public void Repair()
         {
             //No krashes to repair.

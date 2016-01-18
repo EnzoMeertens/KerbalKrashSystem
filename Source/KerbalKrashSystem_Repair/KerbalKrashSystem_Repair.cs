@@ -12,12 +12,27 @@ namespace KerbalKrashSystem_Repair
         private void OnEnable()
         {
             _kerbalKrash = part.GetComponent<KerbalKrashSystem>();
+
+            _kerbalKrash.DamageReceived += _kerbalKrash_DamageReceived;
+            _kerbalKrash.DamageRepaired += _kerbalKrash_DamageReceived;
+        }
+
+        private void OnDisable()
+        {
+            _kerbalKrash.DamageReceived -= _kerbalKrash_DamageReceived;
+            _kerbalKrash.DamageRepaired -= _kerbalKrash_DamageReceived;
+        }
+
+        private void _kerbalKrash_DamageReceived(KerbalKrashSystem sender, float damage)
+        {
+            Events["Repair"].active = damage == 0;
+            Events["Repair"].guiName = "Repair (" + damage.ToString("P") + ")";
         }
 
         /// <summary>
         /// Right-click repair button event: repairs the last applied damage.
         /// </summary>
-        [KSPEvent(guiName = "Repair", guiActive = true, externalToEVAOnly = true, guiActiveEditor = false, active = true, guiActiveUnfocused = true, unfocusedRange = 3.0f)]
+        [KSPEvent(guiName = "Repair (0%)", active = false, guiActive = true, externalToEVAOnly = true, guiActiveEditor = false, guiActiveUnfocused = true, unfocusedRange = 3.0f)]
         public void Repair()
         {
             //No krashes to repair.

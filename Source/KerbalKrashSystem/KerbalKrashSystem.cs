@@ -119,7 +119,7 @@ namespace KKS
         /// </summary>
         /// <param name="krash">Krash to apply.</param>
         /// <param name="inverse">Apply or undo krash.</param>
-        protected void ApplyKrash(Krash krash)
+        public void ApplyKrash(Krash krash)
         {
             Vector3 relativeVelocity = part.transform.TransformDirection(krash.RelativeVelocity); //Transform the direction of the collision to the world reference frame.
 
