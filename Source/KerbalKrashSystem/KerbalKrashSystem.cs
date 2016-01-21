@@ -129,6 +129,8 @@ namespace KKS
             MeshFilter[] meshList = part.FindModelComponents<MeshFilter>();
 
             Vector3 transform = (relativeVelocity / (1f * part.partInfo.partSize) / (part.crashTolerance / Malleability));
+            float invSqrt3 = 1f/Mathf.Sqrt(3);
+
             foreach (MeshFilter meshFilter in meshList)
             {
                 Mesh mesh = meshFilter.mesh;
@@ -144,21 +146,23 @@ namespace KKS
                 Vector3 dentDistanceLocal = meshFilter.transform.TransformDirection(Vector3.one).normalized;
                 dentDistanceLocal = meshFilter.transform.InverseTransformVector(DentDistance * dentDistanceLocal);
                 dentDistanceLocal = Vector3.Max(-dentDistanceLocal, dentDistanceLocal);
-
-                transformT /= dentDistanceLocal.sqrMagnitude;
-
+                Vector3 dentDistanceInv;
+                dentDistanceInv.x = invSqrt3 / dentDistanceLocal.x;
+                dentDistanceInv.y = invSqrt3 / dentDistanceLocal.y;
+                dentDistanceInv.z = invSqrt3 / dentDistanceLocal.z;
+                
                 Vector3[] vertices = mesh.vertices;
                 for (int i = 0; i < vertices.Length; i++)
                 {
                     Vector3 distance = vertices[i] - contactPointLocal;
                     distance = Vector3.Max(-distance, distance);
                     distance = dentDistanceLocal - distance;
+                    distance.Scale(dentDistanceInv);
 
                     if (distance.x < 0 || distance.y < 0 || distance.z < 0)
                         continue;
-
-                    //look into directional displacement.
-                    vertices[i] += distance.magnitude * transformT;
+                    
+                    vertices[i] += distance.sqrMagnitude * transformT;
                 }
 
                 mesh.vertices = vertices;
