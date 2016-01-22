@@ -2,16 +2,14 @@
 {
     public class ModuleKerbalKrashSystem_Engine : KerbalKrashSystem
     {
-        public float OverheatScaling = 10.0f;
+        [KSPField(guiName = "Overheat scaling", guiActive = false)]
+        public float _overheatScaling = 10.0f;
 
         private float _originalHeatProduction;
         private ModuleEngines _engine;
 
         protected override void OnEnabled()
         {
-            base.ToleranceScaling = 8.0f;
-            base.Malleability = 2.0f;
-
             _engine = (ModuleEngines)part.GetComponent(typeof(ModuleEngines));
             _originalHeatProduction = _engine.heatProduction;
 
@@ -34,7 +32,7 @@
         {
             //Increase this engine's heat production when damaged.
             //If damage equals zero, the original heat production will be used.
-            _engine.heatProduction = _originalHeatProduction + (float)(part.maxTemp * damage * OverheatScaling);
+            _engine.heatProduction = _originalHeatProduction + (float)(part.maxTemp * damage * _overheatScaling);
         }
     }
 }

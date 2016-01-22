@@ -13,7 +13,13 @@ namespace KerbalKrashSystem_KIS_Repair
         /// </summary>
         private void OnEnable()
         {
+            if (HighLogic.LoadedScene != GameScenes.FLIGHT)
+                return;
+
             _kerbalKrash = part.GetComponent<KerbalKrashSystem>();
+
+            if (_kerbalKrash == null)
+                return;
 
             _kerbalKrash.DamageReceived += _kerbalKrash_DamageReceived;
             _kerbalKrash.DamageRepaired += _kerbalKrash_DamageReceived;
@@ -26,6 +32,9 @@ namespace KerbalKrashSystem_KIS_Repair
         /// </summary>
         private void OnDisable()
         {
+            if (HighLogic.LoadedScene != GameScenes.FLIGHT)
+                return;
+
             _kerbalKrash.DamageReceived -= _kerbalKrash_DamageReceived;
             _kerbalKrash.DamageRepaired -= _kerbalKrash_DamageReceived;
 
@@ -62,7 +71,7 @@ namespace KerbalKrashSystem_KIS_Repair
         /// <summary>
         /// Right-click repair button event: repairs the last applied damage.
         /// </summary>
-        [KSPEvent(guiName = "Repair (0%)", guiActive = false, externalToEVAOnly = true, guiActiveEditor = false, active = true, guiActiveUnfocused = true, unfocusedRange = 3.0f)]
+        [KSPEvent(name = "Repair", guiName = "Repair (0%)", active = false, guiActive = false, guiActiveEditor = false, externalToEVAOnly = true, guiActiveUnfocused = true, unfocusedRange = 3.0f)]
         public void Repair()
         {
             //No krashes to repair.
@@ -72,17 +81,10 @@ namespace KerbalKrashSystem_KIS_Repair
                 return; 
             }
 
-            //Fully repair the part.
+            //Repair the newest krash of this part.
             _kerbalKrash.Repair();
 
-            //Remove the last krash.
-            _kerbalKrash.Krashes.RemoveAt(_kerbalKrash.Krashes.Count - 1);
-
-            //Apply all remaining krashes.
-            foreach (KerbalKrashSystem.Krash krash in _kerbalKrash.Krashes)
-                _kerbalKrash.ApplyKrash(krash);
-
-            ScreenMessages.PostScreenMessage("Repaired to " + _kerbalKrash.Damage.ToString("P"), 4, ScreenMessageStyle.UPPER_CENTER);
+            ScreenMessages.PostScreenMessage("Repaired " + part.partInfo.title + " to " + _kerbalKrash.Damage.ToString("P"), 4, ScreenMessageStyle.UPPER_CENTER);
         }
     }
 }

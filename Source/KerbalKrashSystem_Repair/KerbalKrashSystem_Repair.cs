@@ -2,7 +2,7 @@
 
 namespace KerbalKrashSystem_Repair
 {
-    public class ModuleKerbalKrashSystem_Repair : PartModule
+    public class ModuleKerbalKrashSystem_Repair : Damageable
     {
         private KerbalKrashSystem _kerbalKrash;
 
@@ -11,7 +11,13 @@ namespace KerbalKrashSystem_Repair
         /// </summary>
         private void OnEnable()
         {
+            if (HighLogic.LoadedScene != GameScenes.FLIGHT)
+                return;
+
             _kerbalKrash = part.GetComponent<KerbalKrashSystem>();
+
+            if (_kerbalKrash == null)
+                return;
 
             _kerbalKrash.DamageReceived += _kerbalKrash_DamageReceived;
             _kerbalKrash.DamageRepaired += _kerbalKrash_DamageReceived;
@@ -19,40 +25,50 @@ namespace KerbalKrashSystem_Repair
 
         private void OnDisable()
         {
+            if (HighLogic.LoadedScene != GameScenes.FLIGHT)
+                return;
+
             _kerbalKrash.DamageReceived -= _kerbalKrash_DamageReceived;
             _kerbalKrash.DamageRepaired -= _kerbalKrash_DamageReceived;
         }
 
         private void _kerbalKrash_DamageReceived(KerbalKrashSystem sender, float damage)
         {
-            Events["Repair"].active = damage == 0;
             Events["Repair"].guiName = "Repair (" + damage.ToString("P") + ")";
+            Events["Repair"].active = damage != 0;
         }
 
         /// <summary>
         /// Right-click repair button event: repairs the last applied damage.
         /// </summary>
-        [KSPEvent(guiName = "Repair (0%)", active = false, guiActive = true, externalToEVAOnly = true, guiActiveEditor = false, guiActiveUnfocused = true, unfocusedRange = 3.0f)]
+        [KSPEvent(name = "Repair", guiName = "Repair (0%)", active = false, guiActive = false, guiActiveEditor = false, externalToEVAOnly = true, guiActiveUnfocused = true, unfocusedRange = 3.0f)]
         public void Repair()
         {
             //No krashes to repair.
             if (_kerbalKrash.Krashes.Count == 0)
             {
-                ScreenMessages.PostScreenMessage("No damage to repair!", 4, ScreenMessageStyle.UPPER_CENTER);
+                ScreenMessages.PostScreenMessage(part.partInfo.title + ": no damage to repair!", 4, ScreenMessageStyle.UPPER_CENTER);
                 return;
             }
 
-            //Fully repair the part.
+            //Only check trait and level requirements if trait is not "None".
+            if (RequiredTrait != Trait.None.ToString())
+            {
+                //Get trait information.
+                ProtoCrewMember trait = FlightGlobals.ActiveVessel.GetVesselCrew()[0];
+
+                //Check if current Kerbal meets all trait requirements.
+                if (trait == null || trait.experienceTrait.Title != RequiredTrait || trait.experienceLevel < RequiredLevel)
+                {
+                    ScreenMessages.PostScreenMessage(part.partInfo.title + " can only be repaired by a level " + RequiredLevel + "(+) " + RequiredTrait + "!", 4, ScreenMessageStyle.UPPER_CENTER);
+                    return;
+                }
+            }
+
+            //Repair the newest krash of this part.
             _kerbalKrash.Repair();
 
-            //Remove the last krash.
-            _kerbalKrash.Krashes.RemoveAt(_kerbalKrash.Krashes.Count - 1);
-
-            //Apply all remaining krashes.
-            foreach (KerbalKrashSystem.Krash krash in _kerbalKrash.Krashes)
-                _kerbalKrash.ApplyKrash(krash);
-
-            ScreenMessages.PostScreenMessage("Repaired to " + _kerbalKrash.Damage.ToString("P"), 4, ScreenMessageStyle.UPPER_CENTER);
+            ScreenMessages.PostScreenMessage(part.partInfo.title + ": repaired to " + _kerbalKrash.Damage.ToString("P"), 4, ScreenMessageStyle.UPPER_CENTER);
         }
     }
 }

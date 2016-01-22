@@ -7,7 +7,7 @@ namespace KKS
     public delegate void DamageReceivedEvent(KerbalKrashSystem sender, float damage);
     public delegate void DamageRepairedEvent(KerbalKrashSystem sender, float damage);
 
-    public abstract class KerbalKrashSystem : PartModule
+    public abstract class KerbalKrashSystem : Damageable
     {
         #region Structs
         #region Krash
@@ -46,16 +46,29 @@ namespace KKS
         /// </summary>
         [KSPField(guiName = "Damage", isPersistant = false, guiActive = true, guiActiveEditor = false, guiFormat = "P")]
         public float Damage;
-        #endregion
 
-        #region Protected fields
         /// <summary>
         /// List containing all recorded krashes.
         /// </summary>
         [Persistent]
         public List<Krash> Krashes = new List<Krash>();
 
-        private float _toleranceScaling = 1.0f;
+        /// <summary>
+        /// Boolean indicating if part is excluded from deformations.
+        /// </summary>
+        [KSPField(guiName = "Exclude", guiActive = false)]
+        public bool _exclude = false;
+        #endregion
+        #endregion
+
+        #region Protected fields
+        /// <summary>
+        /// Original krash tolerance of the part.
+        /// </summary>
+        protected float OriginalCrashTolerance { get; private set; }
+
+        [KSPField(guiName = "Tolerance scaling", guiActive = false)]
+        public float _toleranceScaling = 1.0f;
         /// <summary>
         /// Value indicating the scaling of the krash tolerance of the part.
         /// Tolerances are scaled to create a margin for damaging instead of exploding.
@@ -70,12 +83,8 @@ namespace KKS
             }
         }
 
-        /// <summary>
-        /// Original krash tolerance of the part.
-        /// </summary>
-        protected float OriginalCrashTolerance { get; private set; }
-
-        private float _malleability = 1.0f;
+        [KSPField(guiName = "Malleability", guiActive = false)]
+        public float _malleability = 1.0f;
         /// <summary>
         /// The plasticity of the part: a higher malleability allows for more low-speed deformations.
         /// </summary>
@@ -89,16 +98,22 @@ namespace KKS
         /// <summary>
         /// Cut-off distance from contact point to vertex.
         /// </summary>
-        protected float DentDistance = 1.25f;
-        #endregion
+        protected float DentDistance = 0.75f;
         #endregion
 
         #region Methods
         /// <summary>
-        /// Fully repairs this part.
+        /// Repairs specified number of krashes.
+        /// Positive value repairs newest krash(es).
+        /// Negative value repairs oldest krash(es).
+        /// Zero value doesn't do anything.
         /// </summary>
-        public void Repair()
+        /// <param name="count">Positive value repairs newest krashes. Negative value repairs first krashes. Zero doesn't do anything.</param>
+        public void Repair(int count = 1)
         {
+            if (count == 0)
+                return;
+
             MeshFilter[] currentMeshFilter = part.FindModelComponents<MeshFilter>();
             MeshFilter[] originalMeshFilter = part.partInfo.partPrefab.FindModelComponents<MeshFilter>();
 
@@ -109,26 +124,54 @@ namespace KKS
 
             Damage = 0;
 
+            if(count < 0)
+            {
+                //Get absolute value of count.
+                count *= -1;
+
+                //Remove the last krashes.
+                Krashes.RemoveRange(Krashes.Count - count, count);
+            }
+            else
+            {
+                //Remove the first krashes.
+                Krashes.RemoveRange(0, count);
+            }
+
+            //Apply all remaining krashes.
+            foreach (Krash krash in Krashes)
+                ApplyKrash(krash, false);
+
+            //Fire DamageRepaired event.
             if (DamageRepaired != null)
                 DamageRepaired(this, Damage);
         }
 
-        
         /// <summary>
         /// Apply krash to all meshes in this part.
         /// </summary>
         /// <param name="krash">Krash to apply.</param>
-        /// <param name="inverse">Apply or undo krash.</param>
-        public void ApplyKrash(Krash krash)
+        /// <param name="fireEvent">Fire "DamageReceived" event.</param>
+        public void ApplyKrash(Krash krash, bool fireEvent = true)
         {
             Vector3 relativeVelocity = part.transform.TransformDirection(krash.RelativeVelocity); //Transform the direction of the collision to the world reference frame.
 
             Damage += (relativeVelocity.magnitude / part.crashTolerance);
 
+            //Fire "DamageReceived" event.
+            if (fireEvent && DamageReceived != null)
+                DamageReceived(this, Damage);
+
+            if (_exclude)
+                return;
+
+            //Thanks Ryan Bray (https://github.com/rbray89)
             Vector3 worldPosContact = part.transform.TransformPoint(krash.ContactPoint);
             MeshFilter[] meshList = part.FindModelComponents<MeshFilter>();
 
             Vector3 transform = (relativeVelocity / (1f * part.partInfo.partSize) / (part.crashTolerance / Malleability));
+            float invSqrt3 = 1f / Mathf.Sqrt(3);
+
             foreach (MeshFilter meshFilter in meshList)
             {
                 Mesh mesh = meshFilter.mesh;
@@ -144,8 +187,10 @@ namespace KKS
                 Vector3 dentDistanceLocal = meshFilter.transform.TransformDirection(Vector3.one).normalized;
                 dentDistanceLocal = meshFilter.transform.InverseTransformVector(DentDistance * dentDistanceLocal);
                 dentDistanceLocal = Vector3.Max(-dentDistanceLocal, dentDistanceLocal);
-
-                transformT /= dentDistanceLocal.sqrMagnitude;
+                Vector3 dentDistanceInv;
+                dentDistanceInv.x = invSqrt3 / dentDistanceLocal.x;
+                dentDistanceInv.y = invSqrt3 / dentDistanceLocal.y;
+                dentDistanceInv.z = invSqrt3 / dentDistanceLocal.z;
 
                 Vector3[] vertices = mesh.vertices;
                 for (int i = 0; i < vertices.Length; i++)
@@ -153,21 +198,17 @@ namespace KKS
                     Vector3 distance = vertices[i] - contactPointLocal;
                     distance = Vector3.Max(-distance, distance);
                     distance = dentDistanceLocal - distance;
+                    distance.Scale(dentDistanceInv);
 
                     if (distance.x < 0 || distance.y < 0 || distance.z < 0)
                         continue;
 
-                    //look into directional displacement.
-                    vertices[i] += distance.magnitude * transformT;
+                    vertices[i] += distance.sqrMagnitude * transformT;
                 }
 
                 mesh.vertices = vertices;
                 meshFilter.mesh = mesh;
             }
-
-            //Fire "DamageReceived" event.
-            if (DamageReceived != null)
-                DamageReceived(this, Damage);
         }
         #endregion
 

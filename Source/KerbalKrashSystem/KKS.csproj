@@ -45,6 +45,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Damageable.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="KerbalKrashSystem_Container.cs" />
     <Compile Include="KerbalKrashSystem.cs" />

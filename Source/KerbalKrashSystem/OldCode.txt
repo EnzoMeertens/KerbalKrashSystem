@@ -50,3 +50,105 @@
             if (DamageReceived != null)
                 DamageReceived(this, Damage);
         }
+
+
+
+
+
+		        /// <summary>
+        /// Apply krash to all meshes in this part.
+        /// </summary>
+        /// <param name="krash">Krash to apply.</param>
+        /// <param name="inverse">Apply or undo krash.</param>
+        public void ApplyKrash(Krash krash)
+        {
+            Vector3 relativeVelocity = part.transform.TransformDirection(krash.RelativeVelocity); //Transform the direction of the collision to the world reference frame.
+
+            Damage += (krash.RelativeVelocity.magnitude / part.crashTolerance);
+
+            Vector3 worldPosContact = part.transform.TransformPoint(krash.ContactPoint);
+            MeshFilter[] meshList = part.FindModelComponents<MeshFilter>();
+
+            Vector3 transform = (relativeVelocity / (1f * part.partInfo.partSize) / (part.crashTolerance / Malleability));
+            foreach (MeshFilter meshFilter in meshList)
+            {
+                Mesh mesh = meshFilter.mesh;
+
+                if (meshFilter.sharedMesh == null)
+                    continue;
+
+                if (mesh == null)
+                    mesh = meshFilter.sharedMesh;
+
+                Vector3 transformT = meshFilter.transform.InverseTransformVector(transform);
+                Vector3 contactPointLocal = meshFilter.transform.InverseTransformPoint(worldPosContact);
+                Vector3 dentDistanceLocal = meshFilter.transform.TransformDirection(Vector3.one).normalized;
+                dentDistanceLocal = meshFilter.transform.InverseTransformVector(DentDistance * dentDistanceLocal);
+                dentDistanceLocal = Vector3.Max(-dentDistanceLocal, dentDistanceLocal);
+
+                transformT /= dentDistanceLocal.sqrMagnitude;
+
+                Vector3[] vertices = mesh.vertices;
+                for (int i = 0; i < vertices.Length; i++)
+                {
+                    Vector3 distance = vertices[i] - contactPointLocal;
+                    distance = Vector3.Max(-distance, distance);
+                    distance = dentDistanceLocal - distance;
+
+                    if (distance.x < 0 || distance.y < 0 || distance.z < 0)
+                        continue;
+
+                    //look into directional displacement.
+                    vertices[i] += distance.magnitude * transformT;
+                }
+
+                mesh.vertices = vertices;
+                //meshFilter.mesh = mesh;
+            }
+
+            //Fire "DamageReceived" event.
+            if (DamageReceived != null)
+                DamageReceived(this, Damage);
+        }
+
+
+
+		2016-01-21
+
+		            //Vector3 worldPosContact = part.transform.TransformPoint(krash.ContactPoint);
+            //MeshFilter[] meshList = part.FindModelComponents<MeshFilter>();
+
+            //Vector3 transform = (relativeVelocity / (1f * part.partInfo.partSize) / (part.crashTolerance / Malleability));
+            //foreach (MeshFilter meshFilter in meshList)
+            //{
+            //    Mesh mesh = meshFilter.mesh;
+
+            //    if (meshFilter.sharedMesh == null)
+            //        continue;
+
+            //    if (mesh == null)
+            //        mesh = meshFilter.sharedMesh;
+
+            //    Vector3 transformT = meshFilter.transform.InverseTransformVector(transform);
+            //    Vector3 contactPointLocal = meshFilter.transform.InverseTransformPoint(worldPosContact);
+            //    Vector3 dentDistanceLocal = meshFilter.transform.TransformDirection(Vector3.one).normalized;
+            //    dentDistanceLocal = meshFilter.transform.InverseTransformVector(DentDistance * dentDistanceLocal);
+            //    dentDistanceLocal = Vector3.Max(-dentDistanceLocal, dentDistanceLocal);
+
+            //    transformT /= dentDistanceLocal.sqrMagnitude;
+
+            //    Vector3[] vertices = mesh.vertices;
+            //    for (int i = 0; i < vertices.Length; i++)
+            //    {
+            //        Vector3 distance = vertices[i] - contactPointLocal;
+            //        distance = Vector3.Max(-distance, distance);
+            //        distance = dentDistanceLocal - distance;
+
+            //        if (distance.x < 0 || distance.y < 0 || distance.z < 0)
+            //            continue;
+
+            //        //look into directional displacement.
+            //        vertices[i] += distance.magnitude * transformT;
+            //    }
+
+            //    mesh.vertices = vertices;

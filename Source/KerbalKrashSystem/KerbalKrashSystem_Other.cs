@@ -1,26 +1,36 @@
-﻿using UnityEngine;
-
-namespace KKS
+﻿namespace KKS
 {
     public class ModuleKerbalKrashSystem_Other : KerbalKrashSystem
     {
+        protected bool _wasDamaged = false;
+
         protected override void OnEnabled()
         {
-            base.ToleranceScaling = 2.0f;
-            base.Malleability = 1.0f;
-
-            DamageReceived += ModuleKerbalKrashOther_DamageReceived;
+            DamageReceived += ModuleKerbalKrashSystem_Other_DamageReceived;
+            DamageRepaired += ModuleKerbalKrashSystem_Other_DamageRepaired;
         }
 
         protected override void OnDisabled()
         {
-            DamageReceived -= ModuleKerbalKrashOther_DamageReceived;
+            DamageReceived -= ModuleKerbalKrashSystem_Other_DamageReceived;
+            DamageRepaired += ModuleKerbalKrashSystem_Other_DamageRepaired;
         }
 
-        private void ModuleKerbalKrashOther_DamageReceived(KerbalKrashSystem sender, float e)
+        private void ModuleKerbalKrashSystem_Other_DamageReceived(KerbalKrashSystem sender, float damage)
         {
-            if (Damage > 1)
-                part.explode();
+            if (damage < _damageThreshold || _wasDamaged)
+                return;
+
+            _wasDamaged = true;
+        }
+
+
+        private void ModuleKerbalKrashSystem_Other_DamageRepaired(KerbalKrashSystem sender, float damage)
+        {
+            if (damage >= _damageThreshold || !_wasDamaged)
+                return;
+
+            _wasDamaged = false;
         }
     }
 }

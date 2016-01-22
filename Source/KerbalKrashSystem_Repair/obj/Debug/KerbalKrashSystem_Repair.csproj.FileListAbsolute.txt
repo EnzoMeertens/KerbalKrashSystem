@@ -12,5 +12,4 @@ C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSyst
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_Repair\bin\Debug\TrackIRUnity.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_Repair\bin\Debug\Mono.Cecil.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_Repair\bin\Debug\Mono.Security.dll
-C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_Repair\obj\Debug\KerbalKrashSystem_Repair.csprojResolveAssemblyReference.cache
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem_Repair\bin\Debug\KerbalKrashSystem.pdb

@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
 using KIS;
 using UnityEngine;
+using System.Linq;
+using System;
 
+[assembly: KSPAssemblyDependency("KIS", 1, 2)]
 namespace KerbalKrashSystem_KIS_Repair
 {
     public delegate void EquipmentChangedEvent(object sender, List<object> e);
@@ -32,6 +35,11 @@ namespace KerbalKrashSystem_KIS_Repair
         /// </summary>
         public void Start()
         {
+            bool _assemblyKISLoaded = AssemblyLoader.loadedAssemblies.Any(a => a.assembly.GetName().Name.Equals("KIS", StringComparison.InvariantCultureIgnoreCase));
+
+            if (!_assemblyKISLoaded)
+                Destroy(this);
+
             GameEvents.onVesselChange.Add(OnVesselChange);
         }
 

@@ -41,9 +41,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>D:\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KerbalKrashSystem.dll</HintPath>
     </Reference>
-    <Reference Include="KIS">
-      <HintPath>D:\Steam\SteamApps\common\Kerbal Space Program\GameData\KIS\Plugins\KIS.dll</HintPath>
-      <Private>True</Private>
+    <Reference Include="KIS, Version=1.2.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>Resources\KIS.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -60,8 +60,8 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy KerbalKrashSystem_KIS_Repair.dll "D:\Steam\SteamApps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KerbalKrashSystem_KIS_Repair.dll"
-copy KerbalKrashSystem_KIS_Repair.pdb "D:\Steam\SteamApps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KerbalKrashSystem_KIS_Repair.pdb"</PostBuildEvent>
+    <PostBuildEvent>copy KerbalKrashSystem_KIS_Repair.dll "D:\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KKS-mods\KerbalKrashSystem_KIS_Repair\Plugins\KerbalKrashSystem_KIS_Repair.dll"
+copy KerbalKrashSystem_KIS_Repair.pdb "D:\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KKS-mods\KerbalKrashSystem_KIS_Repair\Plugins\KerbalKrashSystem_KIS_Repair.pdb"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
