@@ -1,0 +1,62 @@
+Dust Puff
+emit
+engineOnArm
+exhaustFlame_blue
+Fire Trails
+Fireball
+Effects/fx_exhaustFlame_blue
+Effects/fx_exhaustFlame_blue_small
+Effects/fx_exhaustFlame_white_tiny
+Effects/fx_exhaustFlame_yellow
+Effects/fx_exhaustFlame_yellow_tiny
+Effects/fx_exhaustSparks_flameout
+Effects/fx_exhaustSparks_yellow
+Effects/fx_gasBurst_white
+fx_gasJet_b_x-
+fx_gasJet_b_x+
+fx_gasJet_bl_z-
+fx_gasJet_bl_z+
+fx_gasJet_br_z-
+fx_gasJet_br_z+
+fx_gasJet_l_y-
+fx_gasJet_l_y+
+fx_gasJet_r_y-
+fx_gasJet_r_y+
+fx_gasJet_t_x-
+fx_gasJet_t_x+
+fx_gasJet_tl_z-
+fx_gasJet_tl_z+
+fx_gasJet_tr_z-
+fx_gasJet_tr_z+
+Effects/fx_smokeTrail_light
+Effects/fx_smokeTrail_medium
+fx_waterSurface
+JetEngine
+ks1_emit
+ks25_emit
+ksX_emit
+LES_emit
+liquidEngineMini
+MassiveBooster
+Metal Bits
+orbitalNukeCore
+orbitalNukeLFO
+orbitalNukeMONO
+Particles
+RAPIER
+shockExhaust_blue
+shockExhaust_blue_small
+shockExhaust_red_small
+Shockwave
+Size2LFB
+Size3AdvancedEngine
+Size3EngineCluster
+smallRadialEngine
+Smoke
+Solid Fuel Chunks
+SRB_large_emit
+SRB_large_emit2
+turboFanEngine
+Water Surface Splash
+waterColumm
+waterSpray
