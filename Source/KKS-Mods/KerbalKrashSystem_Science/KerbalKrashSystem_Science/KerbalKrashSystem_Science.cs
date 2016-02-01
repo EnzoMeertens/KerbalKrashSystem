@@ -2,7 +2,7 @@
 
 namespace KerbalKrashSystem_Science
 {
-    public class ModuleKerbalKrashSystem_Science : Damageable
+    public class ModuleKerbalKrashSystem_Science : KerbalKrashSystem
     {
         private KerbalKrashSystem _kerbalKrash;
         private ModuleScienceExperiment _scienceExperiment;
@@ -28,6 +28,9 @@ namespace KerbalKrashSystem_Science
         private void OnDisable()
         {
             if (HighLogic.LoadedScene != GameScenes.FLIGHT)
+                return;
+
+            if (_kerbalKrash == null)
                 return;
 
             _kerbalKrash.DamageReceived -= _kerbalKrash_DamageReceived;

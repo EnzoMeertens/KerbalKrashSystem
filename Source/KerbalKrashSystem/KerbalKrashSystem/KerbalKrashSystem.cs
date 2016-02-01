@@ -6,6 +6,7 @@ namespace KKS
 {
     public delegate void DamageReceivedEvent(KerbalKrashSystem sender, float damage);
     public delegate void DamageRepairedEvent(KerbalKrashSystem sender, float damage);
+    public delegate void SplashdownEvent(KerbalKrashSystem sender, KerbalKrashSystem.Krash krash);
 
     public abstract class KerbalKrashSystem : Damageable
     {
@@ -42,6 +43,11 @@ namespace KKS
         public event DamageRepairedEvent DamageRepaired;
 
         /// <summary>
+        /// Fired on vessel splashdown.
+        /// </summary>
+        public event SplashdownEvent Splashdown;
+
+        /// <summary>
         /// Value indicating the damage percentage of the part.
         /// </summary>
         [KSPField(guiName = "Damage", isPersistant = false, guiActive = true, guiActiveEditor = false, guiFormat = "P")]
@@ -58,7 +64,6 @@ namespace KKS
         /// </summary>
         [KSPField(guiName = "Exclude", guiActive = false)]
         public bool _exclude = false;
-        #endregion
         #endregion
 
         #region Protected fields
@@ -99,6 +104,20 @@ namespace KKS
         /// Cut-off distance from contact point to vertex.
         /// </summary>
         protected float DentDistance = 0.75f;
+        #endregion
+
+        #region Private fields
+        /// <summary>
+        /// Calculation help constant: (approx.) 1 / √(3).
+        /// </summary>
+        private const float invSqrt3 = 0.57735026919f;
+
+        /// <summary>
+        /// Help variable to calculate splashdown damage only once per splashdown.
+        /// </summary>
+        [Persistent(isPersistant = true)]
+        private bool _splashed = false;
+        #endregion
         #endregion
 
         #region Methods
@@ -156,7 +175,7 @@ namespace KKS
         {
             Vector3 relativeVelocity = part.transform.TransformDirection(krash.RelativeVelocity); //Transform the direction of the collision to the world reference frame.
 
-            Damage += (relativeVelocity.magnitude / part.crashTolerance);
+            Damage += (relativeVelocity.magnitude / part.crashTolerance) / _damageDivider;
 
             //Fire "DamageReceived" event.
             if (fireEvent && DamageReceived != null)
@@ -165,33 +184,31 @@ namespace KKS
             if (_exclude)
                 return;
 
-            //Thanks Ryan Bray (https://github.com/rbray89)
+            //Thanks Ryan Bray (https://github.com/rbray89).
             Vector3 worldPosContact = part.transform.TransformPoint(krash.ContactPoint);
             MeshFilter[] meshList = part.FindModelComponents<MeshFilter>();
 
-            Vector3 transform = (relativeVelocity / (1f * part.partInfo.partSize) / (part.crashTolerance / Malleability));
-            float invSqrt3 = 1f / Mathf.Sqrt(3);
+            Vector3 transform = (relativeVelocity / (10f / part.partInfo.partSize) / (part.crashTolerance / Malleability));
 
             foreach (MeshFilter meshFilter in meshList)
             {
                 Mesh mesh = meshFilter.mesh;
 
+                //No shared mesh means this component doesn't have a mesh.
                 if (meshFilter.sharedMesh == null)
                     continue;
 
+                //A model can use a shared mesh until this mesh is accessed/changed.
                 if (mesh == null)
                     mesh = meshFilter.sharedMesh;
 
                 Vector3 transformT = meshFilter.transform.InverseTransformVector(transform);
                 Vector3 contactPointLocal = meshFilter.transform.InverseTransformPoint(worldPosContact);
                 Vector3 dentDistanceLocal = meshFilter.transform.TransformDirection(Vector3.one).normalized;
-                dentDistanceLocal = meshFilter.transform.InverseTransformVector(DentDistance * dentDistanceLocal);
+                dentDistanceLocal = meshFilter.transform.InverseTransformVector((part.partInfo.partSize / 2f) * dentDistanceLocal);
                 dentDistanceLocal = Vector3.Max(-dentDistanceLocal, dentDistanceLocal);
-                Vector3 dentDistanceInv;
-                dentDistanceInv.x = invSqrt3 / dentDistanceLocal.x;
-                dentDistanceInv.y = invSqrt3 / dentDistanceLocal.y;
-                dentDistanceInv.z = invSqrt3 / dentDistanceLocal.z;
-
+                Vector3 dentDistanceInv = (Vector3.one * invSqrt3).Divide(dentDistanceLocal);
+            
                 Vector3[] vertices = mesh.vertices;
                 for (int i = 0; i < vertices.Length; i++)
                 {
@@ -217,16 +234,20 @@ namespace KKS
         private void OnEnable()
         {
             if (!HighLogic.LoadedSceneIsFlight)
-                return; //Only do stuff when in Flight Scene.
+                return; //Only needed in Flight Scene.
 
             OriginalCrashTolerance = part.crashTolerance;
             ToleranceScaling = ToleranceScaling;
+
+            Splashdown += OnSplashdown;
 
             OnEnabled();
         }
 
         private void OnDisable()
         {
+            Splashdown -= OnSplashdown;
+
             OnDisabled();
         }
 
@@ -248,11 +269,17 @@ namespace KKS
         /// <param name="collision">Collision object containing information about the collision.</param>
         protected virtual void OnCollisionEnter(Collision collision)
         {
-            //Only receive damage if part exists and relative velocity is greater than the original tolerance divided malleability of the part.
-            if (part == null || collision.relativeVelocity.magnitude <= (OriginalCrashTolerance / Malleability))
+            if (!HighLogic.LoadedSceneIsFlight)
                 return;
 
-            //TODO: Temporary fix.
+            //Transform the velocity of the collision into the reference frame of the part. 
+            Vector3 relativeVelocity = part.transform.InverseTransformDirection(collision.relativeVelocity);
+
+            //Only receive damage if part exists and relative velocity is greater than the original tolerance divided malleability of the part.
+            if (part == null || relativeVelocity.magnitude <= (OriginalCrashTolerance / Malleability))
+                return;
+
+            //TODO: Temporary fix. Remove me: unncessary? 
             foreach (ContactPoint contactPoint in collision.contacts)
             {
                 if (contactPoint.thisCollider is WheelCollider || contactPoint.otherCollider is WheelCollider)
@@ -260,13 +287,12 @@ namespace KKS
             }
 
             //No need to do anything if the damage is neglible.
-            if (collision.relativeVelocity.magnitude / part.crashTolerance <= 0)
+            if (relativeVelocity.magnitude / part.crashTolerance <= 0)
                 return;
 
             Krash krash = new Krash
             {
-                //Transform the velocity of the collision into the reference frame of the part. 
-                RelativeVelocity = part.transform.InverseTransformDirection(collision.relativeVelocity),
+                RelativeVelocity = relativeVelocity,
 
                 //Transform the direction of the collision to the reference frame of the part.
                 ContactPoint = part.transform.InverseTransformPoint(collision.contacts[0].point),
@@ -275,6 +301,62 @@ namespace KKS
             Krashes.Add(krash);
 
             ApplyKrash(krash);
+        }
+        #endregion
+
+        #region OnSplashdown
+        private void OnSplashdown(KerbalKrashSystem sender, Krash krash)
+        {
+            Krashes.Add(krash);
+
+            ApplyKrash(krash);
+        }
+        #endregion
+
+        #region OnFixedUpdate
+        protected virtual void FixedUpdate()
+        {
+            if(!HighLogic.LoadedSceneIsFlight || !part.Splashed)
+            {
+                _splashed = false;
+                return;
+            }
+
+            //Inverse surface velocity (damage is the inverse of the velocity).
+            Vector3 relativeVelocity = -part.transform.InverseTransformDirection(part.vessel.srf_velocity);
+
+            //Only receive damage if part exists and relative velocity is greater than the original tolerance divided malleability of the part.
+            if (part == null || relativeVelocity.magnitude <= (OriginalCrashTolerance / Malleability))
+                return;
+
+            //Closest part to the core (lowest point on the collider). This should be faster than checking all vertices.
+            Vector3 contactPoint = part.collider.ClosestPointOnBounds(FlightGlobals.currentMainBody.position);
+
+            double distance = Vector3.Distance(contactPoint, FlightGlobals.currentMainBody.position);
+            distance -= FlightGlobals.currentMainBody.Radius;
+
+            //If distance to the core is larger than 0, we haven't splashed down yet.
+            if (distance > 0)
+                return;
+
+            //Already splashed down.
+            if (_splashed)
+                return;
+
+            _splashed = true;
+
+            //Transform the direction of the collision to the reference frame of the part and scale it down a bit to match the actual mesh a bit better.
+            contactPoint = part.transform.InverseTransformPoint(contactPoint) / part.collider.bounds.size.magnitude;
+
+            Krash krash = new Krash
+            {
+                ContactPoint = contactPoint,
+                RelativeVelocity = relativeVelocity,
+            };
+
+            //Fire "Splashdown" event.
+            if (Splashdown != null)
+                Splashdown(this, krash);
         }
         #endregion
 

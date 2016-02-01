@@ -1,20 +1,17 @@
-﻿//using System.Text;
+﻿using UnityEngine;
 
 namespace KKS
 {
     public static class Extensions
     {
-        //private static readonly StringBuilder Builder = new StringBuilder();
+        public static Vector3 Multiply(this Vector3 @this, Vector3 other)
+        {
+            return new Vector3(@this.x * other.x, @this.y * other.y, @this.z * other.z);
+        }
 
-        //public static string Append(this string @string, params object[] values)
-        //{
-        //    Builder.Clear();
-        //    Builder.Append(@string);
-
-        //    foreach (object value in values)
-        //        Builder.Append(value);
-
-        //    return Builder.ToString();
-        //}
+        public static Vector3 Divide(this Vector3 @this, Vector3 other)
+        {
+            return new Vector3(@this.x / other.x, @this.y / other.y, @this.z / other.z);
+        }
     }
 }

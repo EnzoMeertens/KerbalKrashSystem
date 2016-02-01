@@ -4,7 +4,7 @@ using KKS;
 
 namespace KerbalKrashSystem_KIS_Repair
 {
-    public class ModuleKerbalKrashSystem_KIS_Repair : PartModule
+    public class ModuleKerbalKrashSystem_KIS_Repair : Damageable
     {
         private KerbalKrashSystem _kerbalKrash;
 

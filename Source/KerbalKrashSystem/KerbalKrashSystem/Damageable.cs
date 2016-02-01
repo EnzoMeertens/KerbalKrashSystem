@@ -11,13 +11,20 @@
 
     public abstract class Damageable : PartModule
     {
-        #region Configurable damage variables
+        #region Damage variables
         [KSPField(guiName = "Damage threshold", guiActive = false)]
         public float _damageThreshold = 1.0f;
         /// <summary>
-        /// Parts damaged beyond this threshold will show
+        /// Parts damaged beyond this threshold will show.
         /// </summary>
-        protected float DamageThreshold { get { return _damageThreshold; } }
+        public float DamageThreshold { get { return _damageThreshold; } }
+
+        [KSPField(guiName = "Damage divider", guiActive = false)]
+        public float _damageDivider = 1.0f;
+        /// <summary>
+        /// Divide applied damage by this value to scale down added damage values.
+        /// </summary>
+        public float DamageDivider { get { return _damageDivider; } }
         #endregion
 
         #region Trait

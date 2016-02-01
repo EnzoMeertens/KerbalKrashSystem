@@ -27,6 +27,8 @@ namespace KerbalKrashSystem_Leak
 
         protected void OnDisable()
         {
+            ClearLeaks();
+
             if (_kerbalKrash == null)
                 return;
 
@@ -37,7 +39,7 @@ namespace KerbalKrashSystem_Leak
         protected void FixedUpdate()
         {
             //No need to do anything if damage equals zero (or less).
-            if (_kerbalKrash.Damage <= 0)
+            if (_kerbalKrash == null || _kerbalKrash.Damage <= 0)
                 return;
 
             bool leaking = false;
@@ -104,20 +106,9 @@ namespace KerbalKrashSystem_Leak
         private void _kerbalKrash_DamageRepaired(KerbalKrashSystem sender, float damage)
         {
             //Make sure there are no leaks left on fully repaired part.
-            if(damage <= 0 && _leaks.Count > 0)
+            if(damage <= 0)
             {
-                for(int i = 0; i < _leaks.Count; i++)
-                {
-                    //Get newest leak.
-                    GameObject l = _leaks[i];
-
-                    //Stop and remove leak.
-                    l.particleEmitter.emit = false;
-                    l.DestroyGameObject();
-                    l = null;
-                }
-
-                _leaks.Clear();
+                ClearLeaks();
                 return;
             }
 
@@ -132,6 +123,25 @@ namespace KerbalKrashSystem_Leak
             _leaks.Remove(leak);
             leak.DestroyGameObject();
             leak = null;
+        }
+
+        private void ClearLeaks()
+        {
+            if(_leaks.Count > 0)
+            {
+                for (int i = 0; i < _leaks.Count; i++)
+                {
+                    //Get newest leak.
+                    GameObject l = _leaks[i];
+
+                    //Stop and remove leak.
+                    l.particleEmitter.emit = false;
+                    l.DestroyGameObject();
+                    l = null;
+                }
+
+                _leaks.Clear();
+            }
         }
     }
 }

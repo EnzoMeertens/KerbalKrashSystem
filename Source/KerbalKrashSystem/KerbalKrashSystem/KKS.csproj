@@ -7,7 +7,7 @@
     <ProjectGuid>{C9E72441-4366-42D1-AB8C-7783B93DD81A}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>KerbalKrashSystem</RootNamespace>
+    <RootNamespace>KKS</RootNamespace>
     <AssemblyName>KerbalKrashSystem</AssemblyName>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -46,6 +46,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Damageable.cs" />
+    <Compile Include="Debug_Visual_Point.cs" />
     <Compile Include="Extensions.cs" />
     <Compile Include="KerbalKrashSystem_Container.cs" />
     <Compile Include="KerbalKrashSystem.cs" />

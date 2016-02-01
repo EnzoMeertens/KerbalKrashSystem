@@ -12,3 +12,16 @@ C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\Kerbal
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak_Fuel\KerbalKrashSystem_Leak_Fuel\obj\Debug\KerbalKrashSystem_Leak.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak_Fuel\KerbalKrashSystem_Leak_Fuel\obj\Debug\KerbalKrashSystem_Leak.pdb
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak_Fuel\KerbalKrashSystem_Leak_Fuel\obj\Debug\KerbalKrashSystem_Leak.csprojResolveAssemblyReference.cache
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\bin\Debug\KerbalKrashSystem_Leak.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\bin\Debug\KerbalKrashSystem_Leak.pdb
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\bin\Debug\Assembly-CSharp.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\bin\Debug\KerbalKrashSystem.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\bin\Debug\UnityEngine.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\bin\Debug\Assembly-CSharp-firstpass.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\bin\Debug\TDx.TDxInput.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\bin\Debug\TrackIRUnity.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\bin\Debug\Mono.Cecil.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\bin\Debug\Mono.Security.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\bin\Debug\KerbalKrashSystem.pdb
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\obj\Debug\KerbalKrashSystem_Leak.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\obj\Debug\KerbalKrashSystem_Leak.pdb
