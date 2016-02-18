@@ -15,7 +15,7 @@
         [KSPField(guiName = "Damage threshold", guiActive = false)]
         public float _damageThreshold = 1.0f;
         /// <summary>
-        /// Parts damaged beyond this threshold will show.
+        /// Configurable threshold to trigger certain damage based events.
         /// </summary>
         public float DamageThreshold { get { return _damageThreshold; } }
 

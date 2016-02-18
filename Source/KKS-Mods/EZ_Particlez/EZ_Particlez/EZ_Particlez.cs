@@ -37,6 +37,8 @@ namespace EZPZ
                 particle.particleEmitter.minEmission = 0;
                 particle.particleEmitter.angularVelocity = 0;
                 particle.particleEmitter.rndVelocity = Vector3.zero;
+                particle.transform.eulerAngles = Vector3.zero;
+                particle.transform.position = Vector3.zero;
 
                 ParticleEffects.Add(node.GetValue("Name"), particle);
             }

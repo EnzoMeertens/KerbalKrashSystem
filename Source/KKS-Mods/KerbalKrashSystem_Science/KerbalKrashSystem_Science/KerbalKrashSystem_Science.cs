@@ -4,40 +4,25 @@ namespace KerbalKrashSystem_Science
 {
     public class ModuleKerbalKrashSystem_Science : KerbalKrashSystem
     {
-        private KerbalKrashSystem _kerbalKrash;
         private ModuleScienceExperiment _scienceExperiment;
 
         private bool _wasDamaged = false;
 
-        private void OnEnable()
+        protected override void OnEnabled()
         {
-            if (HighLogic.LoadedScene != GameScenes.FLIGHT)
-                return;
-
-            _kerbalKrash = part.GetComponent<KerbalKrashSystem>();
-
-            if (_kerbalKrash == null)
-                return;
-
             _scienceExperiment = part.GetComponent<ModuleScienceExperiment>();
 
-            _kerbalKrash.DamageReceived += _kerbalKrash_DamageReceived;
-            _kerbalKrash.DamageRepaired += _kerbalKrash_DamageRepaired;
+            DamageReceived += OnDamageReceived;
+            DamageRepaired += OnDamageRepaired;
         }
 
-        private void OnDisable()
+        protected override void OnDisabled()
         {
-            if (HighLogic.LoadedScene != GameScenes.FLIGHT)
-                return;
-
-            if (_kerbalKrash == null)
-                return;
-
-            _kerbalKrash.DamageReceived -= _kerbalKrash_DamageReceived;
-            _kerbalKrash.DamageRepaired -= _kerbalKrash_DamageRepaired;
+            DamageReceived -= OnDamageReceived;
+            DamageRepaired -= OnDamageRepaired;
         }
 
-        private void _kerbalKrash_DamageReceived(KerbalKrashSystem sender, float damage)
+        private void OnDamageReceived(KerbalKrashSystem sender, float damage)
         {
             if (damage < DamageThreshold || _wasDamaged)
                 return;
@@ -54,7 +39,7 @@ namespace KerbalKrashSystem_Science
         }
 
 
-        private void _kerbalKrash_DamageRepaired(KerbalKrashSystem sender, float damage)
+        private void OnDamageRepaired(KerbalKrashSystem sender, float damage)
         {
             if (damage >= DamageThreshold || !_wasDamaged)
                 return;
@@ -66,7 +51,7 @@ namespace KerbalKrashSystem_Science
 
             _scienceExperiment.dataIsCollectable = true;
 
-            ScreenMessages.PostScreenMessage(part.partInfo.title + " functionality restored!", 4, ScreenMessageStyle.UPPER_CENTER);
+            ScreenMessages.PostScreenMessage(part.partInfo.title + " restored!", 4, ScreenMessageStyle.UPPER_CENTER);
         }
     }
 }

@@ -55,7 +55,6 @@
     <Compile Include="KerbalKrashSystem_Leak.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VisualDebugLine.cs" />
-    <Compile Include="VisualDebugPoint.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>

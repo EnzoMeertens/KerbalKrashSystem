@@ -52,7 +52,9 @@
     <Compile Include="KerbalKrashSystem.cs" />
     <Compile Include="KerbalKrashSystem_Engine.cs" />
     <Compile Include="KerbalKrashSystem_Command.cs" />
+    <Compile Include="KerbalKrashSystem_Exclude.cs" />
     <Compile Include="KerbalKrashSystem_Other.cs" />
+    <Compile Include="MeshHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

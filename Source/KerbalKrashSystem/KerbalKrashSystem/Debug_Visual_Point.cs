@@ -15,5 +15,16 @@ namespace KKS
             temp.renderer.material.color = color;
             return temp;
         }
+
+        public static GameObject CreateSphere(Vector3 worldPosition, Color color)
+        {
+            GameObject temp = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            temp.transform.localScale = Vector3.one * 0.25f;
+            temp.transform.position = worldPosition;
+            temp.collider.isTrigger = true;
+            temp.collider.enabled = false;
+            temp.renderer.material.color = color;
+            return temp;
+        }
     }
 }

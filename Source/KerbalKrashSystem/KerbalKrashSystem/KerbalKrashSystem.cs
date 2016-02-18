@@ -26,6 +26,11 @@ namespace KKS
             /// The location of the recorded krash.
             /// </summary>
             public Vector3 ContactPoint;
+
+            /// <summary>
+            /// Value indicating if damage was caused by heat.
+            /// </summary>
+            public bool ThermalDamage;
         }
         #endregion
         #endregion
@@ -91,7 +96,7 @@ namespace KKS
         [KSPField(guiName = "Malleability", guiActive = false)]
         public float _malleability = 1.0f;
         /// <summary>
-        /// The plasticity of the part: a higher malleability allows for more low-speed deformations.
+        /// The plasticity of the part: a higher malleability allows for more low-speed deformations and damage.
         /// </summary>
         /// This value can not be negative.
         protected float Malleability
@@ -103,7 +108,10 @@ namespace KKS
         /// <summary>
         /// Cut-off distance from contact point to vertex.
         /// </summary>
-        protected float DentDistance = 0.75f;
+        protected float DentDistance
+        {
+            get { return part.partInfo.partSize / 5f; }
+        }
         #endregion
 
         #region Private fields
@@ -166,6 +174,7 @@ namespace KKS
                 DamageRepaired(this, Damage);
         }
 
+        //private bool subdivided = false;
         /// <summary>
         /// Apply krash to all meshes in this part.
         /// </summary>
@@ -188,32 +197,40 @@ namespace KKS
             Vector3 worldPosContact = part.transform.TransformPoint(krash.ContactPoint);
             MeshFilter[] meshList = part.FindModelComponents<MeshFilter>();
 
-            Vector3 transform = (relativeVelocity / (10f / part.partInfo.partSize) / (part.crashTolerance / Malleability));
+            Vector3 transform = (relativeVelocity / (1f * part.partInfo.partSize) / (part.crashTolerance / Malleability));
 
             foreach (MeshFilter meshFilter in meshList)
             {
                 Mesh mesh = meshFilter.mesh;
 
-                //No shared mesh means this component doesn't have a mesh.
                 if (meshFilter.sharedMesh == null)
                     continue;
 
-                //A model can use a shared mesh until this mesh is accessed/changed.
                 if (mesh == null)
                     mesh = meshFilter.sharedMesh;
+
+                //if (!subdivided && part.partInfo.partSize >= 2)
+                //{
+                //    subdivided = true;
+                //    MeshHelper.Subdivide(mesh, 2, worldPosContact, DentDistance);
+                //}
 
                 Vector3 transformT = meshFilter.transform.InverseTransformVector(transform);
                 Vector3 contactPointLocal = meshFilter.transform.InverseTransformPoint(worldPosContact);
                 Vector3 dentDistanceLocal = meshFilter.transform.TransformDirection(Vector3.one).normalized;
-                dentDistanceLocal = meshFilter.transform.InverseTransformVector((part.partInfo.partSize / 2f) * dentDistanceLocal);
-                dentDistanceLocal = Vector3.Max(-dentDistanceLocal, dentDistanceLocal);
-                Vector3 dentDistanceInv = (Vector3.one * invSqrt3).Divide(dentDistanceLocal);
-            
+                dentDistanceLocal = meshFilter.transform.InverseTransformVector(DentDistance * dentDistanceLocal);
+                dentDistanceLocal = Vector3.Max(-dentDistanceLocal, dentDistanceLocal); 
+                Vector3 dentDistanceInv;
+                dentDistanceInv.x = invSqrt3 / dentDistanceLocal.x;
+                dentDistanceInv.y = invSqrt3 / dentDistanceLocal.y;
+                dentDistanceInv.z = invSqrt3 / dentDistanceLocal.z;
+
                 Vector3[] vertices = mesh.vertices;
+
                 for (int i = 0; i < vertices.Length; i++)
                 {
                     Vector3 distance = vertices[i] - contactPointLocal;
-                    distance = Vector3.Max(-distance, distance);
+                    distance = Vector3.Max(-distance, distance); 
                     distance = dentDistanceLocal - distance;
                     distance.Scale(dentDistanceInv);
 
@@ -224,7 +241,6 @@ namespace KKS
                 }
 
                 mesh.vertices = vertices;
-                meshFilter.mesh = mesh;
             }
         }
         #endregion
@@ -279,13 +295,6 @@ namespace KKS
             if (part == null || relativeVelocity.magnitude <= (OriginalCrashTolerance / Malleability))
                 return;
 
-            //TODO: Temporary fix. Remove me: unncessary? 
-            foreach (ContactPoint contactPoint in collision.contacts)
-            {
-                if (contactPoint.thisCollider is WheelCollider || contactPoint.otherCollider is WheelCollider)
-                    return;
-            }
-
             //No need to do anything if the damage is neglible.
             if (relativeVelocity.magnitude / part.crashTolerance <= 0)
                 return;
@@ -322,11 +331,17 @@ namespace KKS
                 return;
             }
 
-            //Inverse surface velocity (damage is the inverse of the velocity).
+            //Already splashed down.
+            if (_splashed)
+                return;
+
+            //Inverse surface velocity (damage is in the opposite direction of velocity).
             Vector3 relativeVelocity = -part.transform.InverseTransformDirection(part.vessel.srf_velocity);
+            //double relativeVelocity = part.vessel.verticalSpeed;
+            //relativeVelocity += (part.vessel.horizontalSrfSpeed / 5);
 
             //Only receive damage if part exists and relative velocity is greater than the original tolerance divided malleability of the part.
-            if (part == null || relativeVelocity.magnitude <= (OriginalCrashTolerance / Malleability))
+            if (part == null || relativeVelocity.magnitude <= (OriginalCrashTolerance / Malleability) * PhysicsGlobals.BuoyancyCrashToleranceMult)
                 return;
 
             //Closest part to the core (lowest point on the collider). This should be faster than checking all vertices.
@@ -339,10 +354,6 @@ namespace KKS
             if (distance > 0)
                 return;
 
-            //Already splashed down.
-            if (_splashed)
-                return;
-
             _splashed = true;
 
             //Transform the direction of the collision to the reference frame of the part and scale it down a bit to match the actual mesh a bit better.
@@ -352,6 +363,7 @@ namespace KKS
             {
                 ContactPoint = contactPoint,
                 RelativeVelocity = relativeVelocity,
+                //new Vector3((float)part.vessel.srf_velocity.x, (float)relativeVelocity, (float)part.vessel.srf_velocity.z),
             };
 
             //Fire "Splashdown" event.

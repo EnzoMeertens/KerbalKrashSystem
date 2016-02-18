@@ -1,4 +1,6 @@
-﻿namespace KKS
+﻿using UnityEngine;
+
+namespace KKS
 {
     public class ModuleKerbalKrashSystem_Command : KerbalKrashSystem
     {
@@ -23,9 +25,8 @@
 
             _wasDamaged = true;
 
-            ScreenMessages.PostScreenMessage(part.partInfo.title + " functionality damaged.", 4, ScreenMessageStyle.UPPER_CENTER);
+            ScreenMessages.PostScreenMessage(part.partInfo.title + " damaged.", 4, ScreenMessageStyle.UPPER_CENTER);
         }
-
 
         private void ModuleKerbalKrashSystem_Command_DamageRepaired(KerbalKrashSystem sender, float damage)
         {
@@ -34,7 +35,7 @@
 
             _wasDamaged = false;
 
-            ScreenMessages.PostScreenMessage(part.partInfo.title + " functionality restored!", 4, ScreenMessageStyle.UPPER_CENTER);
+            ScreenMessages.PostScreenMessage(part.partInfo.title + " restored!", 4, ScreenMessageStyle.UPPER_CENTER);
         }
     }
 }
