@@ -35,18 +35,18 @@ public static class MeshHelper
     }
 
     #region Subdivide4 (2x2)
-    static int? GetNewVertex4(int i1, int i2, Vector3 hitpoint, float distance)
+    static int GetNewVertex4(int i1, int i2, Vector3 hitpoint, float distance)
     {
         int newIndex = vertices.Count;
+
         uint t1 = ((uint)i1 << 16) | (uint)i2;
         uint t2 = ((uint)i2 << 16) | (uint)i1;
+
         if (newVectices.ContainsKey(t2))
             return newVectices[t2];
+
         if (newVectices.ContainsKey(t1))
             return newVectices[t1];
-
-        if (Vector3.Distance(hitpoint, (vertices[i1] + vertices[i2]) * 0.5f) < distance)
-            return null;
 
         newVectices.Add(t1, newIndex);
 
@@ -58,21 +58,21 @@ public static class MeshHelper
         if (colors.Count > 0)
             colors.Add((colors[i1] + colors[i2]) * 0.5f);
 
-        if (uv.Count > 0)
-            uv.Add((uv[i1] + uv[i2]) * 0.5f);
+        //if (uv.Count > 0)
+        //    uv.Add((uv[i1] + uv[i2]) * 0.5f);
 
-        if (uv1.Count > 0)
-            uv1.Add((uv1[i1] + uv1[i2]) * 0.5f);
+        //if (uv1.Count > 0)
+        //    uv1.Add((uv1[i1] + uv1[i2]) * 0.5f);
 
-        if (uv2.Count > 0)
-            uv2.Add((uv2[i1] + uv2[i2]) * 0.5f);
+        //if (uv2.Count > 0)
+        //    uv2.Add((uv2[i1] + uv2[i2]) * 0.5f);
 
         return newIndex;
     }
 
 
     /// <summary>
-    /// Devides each triangles into 4. A quad(2 tris) will be splitted into 2x2 quads( 8 tris )
+    /// Divides each triangle into 4. A quad (2 tris) will be split into 2x2 quads (8 tris)
     /// </summary>
     /// <param name="mesh"></param>
     public static void Subdivide4(Mesh mesh, Vector3 hitpoint, float distance)
@@ -88,17 +88,14 @@ public static class MeshHelper
             int i2 = triangles[i + 1];
             int i3 = triangles[i + 2];
 
-            int? a = GetNewVertex4(i1, i2, hitpoint, distance);
-            int? b = GetNewVertex4(i2, i3, hitpoint, distance);
-            int? c = GetNewVertex4(i3, i1, hitpoint, distance);
+            int a = GetNewVertex4(i1, i2, hitpoint, distance);
+            int b = GetNewVertex4(i2, i3, hitpoint, distance);
+            int c = GetNewVertex4(i3, i1, hitpoint, distance);
 
-            if (a == null || b == null || c == null)
-                continue;
-
-            indices.Add(i1); indices.Add(a.Value); indices.Add(c.Value); //If any of these is within range: do it.
-            indices.Add(i2); indices.Add(b.Value); indices.Add(a.Value); //Otherwise no need to add them.
-            indices.Add(i3); indices.Add(c.Value); indices.Add(b.Value); //I think.
-            indices.Add(a.Value); indices.Add(b.Value); indices.Add(c.Value); // center triangle
+            indices.Add(i1); indices.Add(a); indices.Add(c); //If any of these is within range: do it.
+            indices.Add(i2); indices.Add(b); indices.Add(a); //Otherwise no need to add them.
+            indices.Add(i3); indices.Add(c); indices.Add(b); //I think.
+            indices.Add(a); indices.Add(b); indices.Add(c); // center triangle
         }
 
         mesh.vertices = vertices.ToArray();

@@ -6,12 +6,17 @@ namespace KerbalKrashSystem_Leak
 {
     public class ModuleKerbalKrashSystem_Leak : Damageable
     {
+        [KSPField(guiName = "Flow scaling", guiActive = false)]
+        public float _flowScaling = 5.0f;
+
         private KerbalKrashSystem _kerbalKrash;
 
         private List<GameObject> _leaks = new List<GameObject>();
         private float _averageResourceAmount = 1.0f;
 
         private readonly Vector3 _localForward = new Vector3(0, 0, -1);
+
+        private float _previousDamage = 0;
 
         protected void OnEnable()
         {
@@ -49,15 +54,27 @@ namespace KerbalKrashSystem_Leak
             //Drain all of this container's resources.
             foreach (PartResource resource in part.Resources)
             {
-                //Resource drained, no need to drain more.
-                if (resource.amount > 0.0)
+                if (resource.info.resourceFlowMode == ResourceFlowMode.NO_FLOW)
+                    continue;
+
+                //Still resources available: keep draining.
+                if (resource.amount > 0.0 || CheatOptions.InfiniteFuel)
+                {
                     leaking = true;
+
+                    resource.amount -= _kerbalKrash.Damage * Time.deltaTime * TimeWarp.CurrentRate * _flowScaling;
+
+                    //Clamp to a minimum of zero resources.
+                    if (resource.amount <= 0.0)
+                        resource.amount = 0.0;
+                }
 
                 if (resource.resourceName == "ElectricCharge" && part.Resources.Count == 1)
                 {
                     sparks = true;
                     continue;
                 }
+
 
                 //Fast "average".
                 _averageResourceAmount = (_averageResourceAmount / 2.0f) + ((float)(resource.amount / resource.maxAmount) / 2.0f);
@@ -86,60 +103,75 @@ namespace KerbalKrashSystem_Leak
             //Get newest krash.
             KerbalKrashSystem.Krash krash = _kerbalKrash.Krashes[_kerbalKrash.Krashes.Count - 1];
 
-            GameObject _leak = null;
+            GameObject leak = null;
             bool sparks = false;
+
             //Create leak emitter.
             foreach (PartResource resource in part.Resources)
             {
-                if (_leak != null)
+                if (leak != null)
                     continue;
 
-                //Only pumpable resources can leak.
-                if (resource.info.resourceTransferMode != ResourceTransferMode.PUMP)
+                //Only flowable resources can leak: lose a fixed amount on impact for unflowable resources.
+                if (resource.info.resourceFlowMode == ResourceFlowMode.NO_FLOW)
+                {
+                    //Remove resource based on remaining resource times delta-Damage (damage - previous damage).
+                    resource.amount -= resource.amount * (damage - _previousDamage);
+
+                    if (resource.amount <= 0)
+                        resource.amount = 0;
+
                     continue;
+                }
 
                 //Only contains electric charge.
                 if (resource.resourceName == "ElectricCharge" && part.Resources.Count == 1)
                 {
-                    _leak = Instantiate(EZPZ.EZ_Particlez.Instance.ParticleEffects["fx_exhaustSparks_flameout"]) as GameObject;
+                    leak = Instantiate(EZPZ.EZ_Particlez.Instance.ParticleEffects["fx_exhaustSparks_flameout"]) as GameObject;
                     sparks = true;
                 }
                 else
-                    _leak = Instantiate(EZPZ.EZ_Particlez.Instance.ParticleEffects["fx_gasJet_white"]) as GameObject;
+                    leak = Instantiate(EZPZ.EZ_Particlez.Instance.ParticleEffects["fx_gasJet_white"]) as GameObject;
             }
 
+            if (leak == null)
+                return;
+
             //Attach the leak to this part.
-            _leak.transform.parent = part.transform;
+            leak.transform.parent = part.transform;
 
             //Set position to the damaged point.
             Vector3 position = krash.ContactPoint;
             position.x /= 2;
             position.z /= 2;
-            _leak.transform.localPosition = sparks ? Vector3.zero : position;
+            leak.transform.localPosition = sparks ? Vector3.zero : position;
 
             //Scale the emitter size down if sparking instead of leaking.
-            _leak.transform.localScale = Vector3.one / (sparks ? 5f : 1f);
+            leak.transform.localScale = Vector3.one / (sparks ? 5f : 1f);
 
             //Leak away from the center of this part.
-            _leak.transform.LookAt(part.transform.TransformPoint(new Vector3(0, krash.ContactPoint.y, 0)), _leak.transform.up);
+            leak.transform.LookAt(part.transform.TransformPoint(new Vector3(0, krash.ContactPoint.y, 0)), leak.transform.up);
 
             //Give the leak some speed.
-            _leak.particleEmitter.localVelocity = _localForward * (sparks ? 0 : 5);
-            _leak.particleEmitter.rndRotation = sparks;
-            _leak.particleEmitter.rndAngularVelocity = sparks ? 1 : 0;
-            _leak.particleEmitter.rndVelocity = sparks ? Vector3.one : Vector3.zero;
+            leak.particleEmitter.localVelocity = _localForward * (sparks ? 0 : 5);
+            leak.particleEmitter.rndRotation = sparks;
+            leak.particleEmitter.rndAngularVelocity = sparks ? 1 : 0;
+            leak.particleEmitter.rndVelocity = sparks ? Vector3.one : Vector3.zero;
 
-            _leak.particleEmitter.minSize = sparks ? 0.01f : 0.025f;
-            _leak.particleEmitter.maxSize = sparks ? 0.02f : 0.05f;
-            _leak.particleEmitter.useWorldSpace = false;
-            _leak.particleEmitter.maxEnergy = 0.5f;
-            _leak.particleEmitter.maxEmission = sparks ? 25 : 50; 
+            leak.particleEmitter.minSize = sparks ? 0.01f : 0.025f;
+            leak.particleEmitter.maxSize = sparks ? 0.02f : 0.05f;
+            leak.particleEmitter.useWorldSpace = false;
+            leak.particleEmitter.maxEnergy = 0.5f;
+            leak.particleEmitter.maxEmission = sparks ? 25 : 50; 
 
             //Start emiting particles from leak.
-            _leak.particleEmitter.emit = true;
+            leak.particleEmitter.emit = true;
 
             //Save reference to this leak.
-            _leaks.Add(_leak);
+            _leaks.Add(leak);
+
+            //Assign previous damage to current damage (needed for NO_FLOW resource loss).
+            _previousDamage = damage;
         }
 
 
@@ -152,6 +184,7 @@ namespace KerbalKrashSystem_Leak
                 return;
             }
 
+            //No leaks to fix.
             if (_leaks.Count == 0)
                 return;
 

@@ -105,6 +105,17 @@ namespace KKS
             set { _malleability = Mathf.Abs(value); }
         }
 
+        [KSPField(guiName = "Horizontal splashdown scaling", guiActive = false)]
+        public float _horizontalSplashdownScaling = 10.0f;
+        /// <summary>
+        /// The plasticity of the part: a higher malleability allows for more low-speed deformations and damage.
+        /// </summary>
+        /// This value can not be negative.
+        protected float HorizontalSplashdownScaling
+        {
+            get { return _horizontalSplashdownScaling; }
+        }
+
         /// <summary>
         /// Cut-off distance from contact point to vertex.
         /// </summary>
@@ -175,6 +186,7 @@ namespace KKS
         }
 
         //private bool subdivided = false;
+
         /// <summary>
         /// Apply krash to all meshes in this part.
         /// </summary>
@@ -325,36 +337,30 @@ namespace KKS
         #region OnFixedUpdate
         protected virtual void FixedUpdate()
         {
-            if(!HighLogic.LoadedSceneIsFlight || !part.Splashed)
+            if (!HighLogic.LoadedSceneIsFlight || part == null)
             {
                 _splashed = false;
                 return;
             }
 
+            //Get the altitude of the part, instead of the altitude of the vessel.
+            double partAltitude = FlightGlobals.getAltitudeAtPos(part.transform.position, FlightGlobals.currentMainBody);
+            if (partAltitude > 0)
+                return;
+
+            //Only receive damage if part's velocity is greater than the original tolerance divided malleability of the part.
+            double scaledHorizontalSpeed = part.vessel.horizontalSrfSpeed / HorizontalSplashdownScaling;
+            if (part.vessel.verticalSpeed + scaledHorizontalSpeed <= (OriginalCrashTolerance / Malleability))
+                return;
+
             //Already splashed down.
             if (_splashed)
                 return;
 
-            //Inverse surface velocity (damage is in the opposite direction of velocity).
-            Vector3 relativeVelocity = -part.transform.InverseTransformDirection(part.vessel.srf_velocity);
-            //double relativeVelocity = part.vessel.verticalSpeed;
-            //relativeVelocity += (part.vessel.horizontalSrfSpeed / 5);
-
-            //Only receive damage if part exists and relative velocity is greater than the original tolerance divided malleability of the part.
-            if (part == null || relativeVelocity.magnitude <= (OriginalCrashTolerance / Malleability) * PhysicsGlobals.BuoyancyCrashToleranceMult)
-                return;
+            _splashed = true;
 
             //Closest part to the core (lowest point on the collider). This should be faster than checking all vertices.
             Vector3 contactPoint = part.collider.ClosestPointOnBounds(FlightGlobals.currentMainBody.position);
-
-            double distance = Vector3.Distance(contactPoint, FlightGlobals.currentMainBody.position);
-            distance -= FlightGlobals.currentMainBody.Radius;
-
-            //If distance to the core is larger than 0, we haven't splashed down yet.
-            if (distance > 0)
-                return;
-
-            _splashed = true;
 
             //Transform the direction of the collision to the reference frame of the part and scale it down a bit to match the actual mesh a bit better.
             contactPoint = part.transform.InverseTransformPoint(contactPoint) / part.collider.bounds.size.magnitude;
@@ -362,8 +368,8 @@ namespace KKS
             Krash krash = new Krash
             {
                 ContactPoint = contactPoint,
-                RelativeVelocity = relativeVelocity,
-                //new Vector3((float)part.vessel.srf_velocity.x, (float)relativeVelocity, (float)part.vessel.srf_velocity.z),
+                RelativeVelocity = //relativeVelocity,
+                new Vector3((float)scaledHorizontalSpeed, (float)part.vessel.verticalSpeed),
             };
 
             //Fire "Splashdown" event.
