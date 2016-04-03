@@ -136,6 +136,68 @@ namespace KKS
         /// </summary>
         [Persistent(isPersistant = true)]
         private bool _splashed = false;
+
+        /// <summary>
+        /// Help constant (in units of 0.02 seconds) to prevent "infinite" collisions. 
+        /// In some cases the collider gets deformed into the path of the 
+        /// collision direction, which deforms the collider into the path 
+        /// of the collision.
+        /// </summary>
+        private const int _collisionDelay = 5;
+
+        /// <summary>
+        /// Help variable to prevent "infinite" collisions. 
+        /// In some cases the collider gets deformed into the path of the 
+        /// collision direction, which deforms the collider into the path 
+        /// of the collision.
+        /// </summary>
+        private int _collisionDelayCounter = 0;
+
+        private MeshFilter[] _meshFilters = null;
+        /// <summary>
+        /// Returns all meshes of this part.
+        /// </summary>
+        private MeshFilter[] meshFilters
+        {
+            get
+            {
+                if(_meshFilters == null)
+                    _meshFilters = part.FindModelComponents<MeshFilter>();
+
+                return _meshFilters;
+            }
+        }
+
+        private MeshCollider _meshCollider = null;
+        /// <summary>
+        /// Returns the MeshCollider of this part.
+        /// </summary>
+        private MeshCollider meshCollider
+        {
+            get
+            {
+                if(_meshCollider == null)
+                    _meshCollider = part.FindModelComponent<MeshCollider>();
+
+                return _meshCollider;
+            }
+        }
+
+        private Mesh _colliderMesh = null;
+        /// <summary>
+        /// Returns the mesh of the MeshCollider of this part.
+        /// </summary>
+        private Mesh colliderMesh
+        {
+            get
+            {
+                if(_colliderMesh == null)
+                    _colliderMesh = Instantiate(meshCollider.sharedMesh) as Mesh;
+
+                return _colliderMesh;
+            }
+        }
+
         #endregion
         #endregion
 
@@ -152,13 +214,22 @@ namespace KKS
             if (count == 0)
                 return;
 
-            MeshFilter[] currentMeshFilter = part.FindModelComponents<MeshFilter>();
-            MeshFilter[] originalMeshFilter = part.partInfo.partPrefab.FindModelComponents<MeshFilter>();
+            #region Restore mesh
+            //TODO: This can probably be optimized by storing the variables. But that would increase RAM usage(?)
+            MeshFilter[] currentMeshFilters = part.FindModelComponents<MeshFilter>();
+            MeshFilter[] originalMeshFilters = part.partInfo.partPrefab.FindModelComponents<MeshFilter>();
 
-            for(int i = 0; i < currentMeshFilter.Length; i++)
-            {
-                currentMeshFilter[i].mesh = originalMeshFilter[i].mesh;
-            }
+            for(int i = 0; i < currentMeshFilters.Length; i++)
+                currentMeshFilters[i].mesh = originalMeshFilters[i].mesh;
+            #endregion
+
+            #region Restore collider
+            MeshCollider currentMeshCollider = part.FindModelComponent<MeshCollider>();
+            MeshCollider originalMeshCollider = part.partInfo.partPrefab.FindModelComponent<MeshCollider>();
+
+            currentMeshCollider.sharedMesh = originalMeshCollider.sharedMesh;
+            currentMeshCollider.convex = true;
+            #endregion
 
             Damage = 0;
 
@@ -205,13 +276,23 @@ namespace KKS
             if (_exclude)
                 return;
 
-            //Thanks Ryan Bray (https://github.com/rbray89).
-            Vector3 worldPosContact = part.transform.TransformPoint(krash.ContactPoint);
-            MeshFilter[] meshList = part.FindModelComponents<MeshFilter>();
-
             Vector3 transform = (relativeVelocity / (1f * part.partInfo.partSize) / (part.crashTolerance / Malleability));
+            Vector3 worldPosition = part.transform.TransformPoint(krash.ContactPoint);
 
-            foreach (MeshFilter meshFilter in meshList)
+            DeformMesh(transform, worldPosition);
+
+            DeformCollider(transform, worldPosition);
+        }
+
+        /// <summary>
+        /// Updates the visual components of the part.
+        /// Thanks Ryan Bray (https://github.com/rbray89).
+        /// </summary>
+        /// <param name="transform">Vector indicating the amount of deformation.</param>
+        /// <param name="worldPosition">Position in the world to apply the deformation from.</param>
+        private void DeformMesh(Vector3 transform, Vector3 worldPosition)
+        {
+            foreach (MeshFilter meshFilter in meshFilters)
             {
                 Mesh mesh = meshFilter.mesh;
 
@@ -228,10 +309,10 @@ namespace KKS
                 //}
 
                 Vector3 transformT = meshFilter.transform.InverseTransformVector(transform);
-                Vector3 contactPointLocal = meshFilter.transform.InverseTransformPoint(worldPosContact);
+                Vector3 contactPointLocal = meshFilter.transform.InverseTransformPoint(worldPosition);
                 Vector3 dentDistanceLocal = meshFilter.transform.TransformDirection(Vector3.one).normalized;
                 dentDistanceLocal = meshFilter.transform.InverseTransformVector(DentDistance * dentDistanceLocal);
-                dentDistanceLocal = Vector3.Max(-dentDistanceLocal, dentDistanceLocal); 
+                dentDistanceLocal = Vector3.Max(-dentDistanceLocal, dentDistanceLocal);
                 Vector3 dentDistanceInv;
                 dentDistanceInv.x = invSqrt3 / dentDistanceLocal.x;
                 dentDistanceInv.y = invSqrt3 / dentDistanceLocal.y;
@@ -242,7 +323,7 @@ namespace KKS
                 for (int i = 0; i < vertices.Length; i++)
                 {
                     Vector3 distance = vertices[i] - contactPointLocal;
-                    distance = Vector3.Max(-distance, distance); 
+                    distance = Vector3.Max(-distance, distance);
                     distance = dentDistanceLocal - distance;
                     distance.Scale(dentDistanceInv);
 
@@ -254,6 +335,44 @@ namespace KKS
 
                 mesh.vertices = vertices;
             }
+        }
+
+        /// <summary>
+        /// Updates the collider component of the part.
+        /// </summary>
+        /// <param name="transform">Vector indicating the amount of deformation.</param>
+        /// <param name="worldPosition">Position in the world to apply the deformation from.</param>
+        private void DeformCollider(Vector3 transform, Vector3 worldPosition)
+        {
+            if (meshCollider == null || colliderMesh == null)
+                return; //Nothing to deform.
+
+            Vector3 transformT = meshCollider.transform.InverseTransformVector(transform);
+            Vector3 contactPointLocal = meshCollider.transform.InverseTransformPoint(worldPosition);
+
+            Vector3 dentDistanceLocal = meshCollider.transform.TransformDirection(Vector3.one).normalized;
+            dentDistanceLocal = meshCollider.transform.InverseTransformVector(DentDistance * dentDistanceLocal);
+            dentDistanceLocal = Vector3.Max(-dentDistanceLocal, dentDistanceLocal);
+
+            Vector3 dentDistanceInv = new Vector3(invSqrt3 / dentDistanceLocal.x, invSqrt3 / dentDistanceLocal.y, invSqrt3 / dentDistanceLocal.z);
+
+            Vector3[] vertices = colliderMesh.vertices;
+
+            for (int i = 0; i < vertices.Length; i++)
+            {
+                Vector3 distance = vertices[i] - contactPointLocal;
+                distance = Vector3.Max(-distance, distance);
+                distance = dentDistanceLocal - distance;
+                distance.Scale(dentDistanceInv);
+
+                if (distance.x < 0 || distance.y < 0 || distance.z < 0)
+                    continue;
+
+                vertices[i] += distance.sqrMagnitude * transformT;
+            }
+
+            colliderMesh.vertices = vertices;
+            meshCollider.convex = true;
         }
         #endregion
 
@@ -267,15 +386,19 @@ namespace KKS
             OriginalCrashTolerance = part.crashTolerance;
             ToleranceScaling = ToleranceScaling;
 
+            //Register the OnSplashDown event.
             Splashdown += OnSplashdown;
 
+            //Invoke OnEnabled function on derived classes.
             OnEnabled();
         }
 
         private void OnDisable()
         {
+            //Unregister the OnSplashDown event.
             Splashdown -= OnSplashdown;
 
+            //Invoke OnDisabled function on derived classes.
             OnDisabled();
         }
 
@@ -303,8 +426,28 @@ namespace KKS
             //Transform the velocity of the collision into the reference frame of the part. 
             Vector3 relativeVelocity = part.transform.InverseTransformDirection(collision.relativeVelocity);
 
+            float angle = Vector3.Angle(relativeVelocity, part.transform.InverseTransformDirection(collision.contacts[0].normal));
+
+            //If collision occurs under a large angle, damage is ignored for now.
+            //TODO: angle: [70, 90>: SCRAPING. ADD TEXTURES?
+            if (angle > 70)
+                return;
+
+            //Convert angle to [0, 1].
+            angle = Mathf.Cos(Mathf.Deg2Rad * angle);
+
+            //Scale the impact velocity by the angle. 
+            relativeVelocity *= angle;
+
+            ////Limit collisions to one per collision delay.
+            //if (_collisionDelayCounter < _collisionDelay)
+            //    return;
+
+            ////Reset the physics counter.
+            //_collisionDelayCounter = 0;
+
             //Only receive damage if part exists and relative velocity is greater than the original tolerance divided malleability of the part.
-            if (part == null || relativeVelocity.magnitude <= (OriginalCrashTolerance / Malleability))
+            if (part == null || relativeVelocity.magnitude <= OriginalCrashTolerance)
                 return;
 
             //No need to do anything if the damage is neglible.
@@ -343,6 +486,9 @@ namespace KKS
                 return;
             }
 
+            //if (_collisionDelayCounter < _collisionDelay)
+            //    _collisionDelayCounter++;
+
             //Get the altitude of the part, instead of the altitude of the vessel.
             double partAltitude = FlightGlobals.getAltitudeAtPos(part.transform.position, FlightGlobals.currentMainBody);
             if (partAltitude > 0)
@@ -368,8 +514,7 @@ namespace KKS
             Krash krash = new Krash
             {
                 ContactPoint = contactPoint,
-                RelativeVelocity = //relativeVelocity,
-                new Vector3((float)scaledHorizontalSpeed, (float)part.vessel.verticalSpeed),
+                RelativeVelocity = new Vector3((float)scaledHorizontalSpeed, (float)part.vessel.verticalSpeed),
             };
 
             //Fire "Splashdown" event.

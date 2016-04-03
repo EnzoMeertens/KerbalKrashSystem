@@ -1,4 +1,4 @@
-Version: 0.25
+Version: 0.3
 
 
 
@@ -10,4 +10,6 @@ Special thanks to:
 	ialdabaoth 	(http://forum.kerbalspaceprogram.com/index.php?/profile/57270-ialdabaoth/)
 	Sarbian 	(http://forum.kerbalspaceprogram.com/index.php?/profile/57146-sarbian/)
 	rbray89		(http://forum.kerbalspaceprogram.com/index.php?/profile/48847-rbray89/)
+	ferram4         (http://forum.kerbalspaceprogram.com/index.php?/profile/21328-ferram4/)
+
 
