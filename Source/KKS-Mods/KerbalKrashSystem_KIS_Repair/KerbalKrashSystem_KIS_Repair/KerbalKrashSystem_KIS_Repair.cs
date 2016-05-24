@@ -21,6 +21,7 @@ namespace KerbalKrashSystem_KIS_Repair
             if (_kerbalKrash == null)
                 return;
 
+            //TODO: Add script to Kerbal, Kerbal to this.
             _kerbalKrash.DamageReceived += _kerbalKrash_DamageReceived;
             _kerbalKrash.DamageRepaired += _kerbalKrash_DamageReceived;
 

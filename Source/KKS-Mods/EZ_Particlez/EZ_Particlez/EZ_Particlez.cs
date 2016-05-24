@@ -31,12 +31,14 @@ namespace EZPZ
 
                 DontDestroyOnLoad(particle);
 
-                particle.particleEmitter.emit = false;
-                particle.particleEmitter.localVelocity = Vector3.zero;
-                particle.particleEmitter.minEnergy = 0;
-                particle.particleEmitter.minEmission = 0;
-                particle.particleEmitter.angularVelocity = 0;
-                particle.particleEmitter.rndVelocity = Vector3.zero;
+                ParticleEmitter particleEmitter = particle.GetComponent<ParticleEmitter>();
+
+                particleEmitter.emit = false;
+                particleEmitter.localVelocity = Vector3.zero;
+                particleEmitter.minEnergy = 0;
+                particleEmitter.minEmission = 0;
+                particleEmitter.angularVelocity = 0;
+                particleEmitter.rndVelocity = Vector3.zero;
                 particle.transform.eulerAngles = Vector3.zero;
                 particle.transform.position = Vector3.zero;
 

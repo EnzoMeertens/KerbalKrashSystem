@@ -31,8 +31,10 @@ C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\Kerbal
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_KIS_Repair\KerbalKrashSystem_KIS_Repair\bin\Debug\KerbalKrashSystem_KIS_Repair.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_KIS_Repair\KerbalKrashSystem_KIS_Repair\bin\Debug\KerbalKrashSystem_KIS_Repair.pdb
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_KIS_Repair\KerbalKrashSystem_KIS_Repair\bin\Debug\KerbalKrashSystem.dll
-C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_KIS_Repair\KerbalKrashSystem_KIS_Repair\bin\Debug\KIS.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_KIS_Repair\KerbalKrashSystem_KIS_Repair\bin\Debug\KerbalKrashSystem.pdb
-C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_KIS_Repair\KerbalKrashSystem_KIS_Repair\obj\Debug\KerbalKrashSystem_KIS_Repair.csprojResolveAssemblyReference.cache
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_KIS_Repair\KerbalKrashSystem_KIS_Repair\obj\Debug\KerbalKrashSystem_KIS_Repair.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_KIS_Repair\KerbalKrashSystem_KIS_Repair\obj\Debug\KerbalKrashSystem_KIS_Repair.pdb
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_KIS_Repair\KerbalKrashSystem_KIS_Repair\bin\Debug\KSPUtil.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_KIS_Repair\KerbalKrashSystem_KIS_Repair\bin\Debug\KIS.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_KIS_Repair\KerbalKrashSystem_KIS_Repair\bin\Debug\KSPDev_Utils.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_KIS_Repair\KerbalKrashSystem_KIS_Repair\obj\Debug\KerbalKrashSystem_KIS_Repair.csprojResolveAssemblyReference.cache

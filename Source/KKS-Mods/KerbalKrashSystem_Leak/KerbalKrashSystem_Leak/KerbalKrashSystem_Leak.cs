@@ -58,7 +58,7 @@ namespace KerbalKrashSystem_Leak
                     continue;
 
                 //Still resources available: keep draining.
-                if (resource.amount > 0.0 || CheatOptions.InfiniteFuel)
+                if (resource.amount > 0.0 || CheatOptions.InfinitePropellant)
                 {
                     leaking = true;
 
@@ -82,16 +82,18 @@ namespace KerbalKrashSystem_Leak
 
             foreach (GameObject leak in _leaks)
             {
-                leak.particleEmitter.emit = leaking;
-                leak.particleEmitter.localVelocity = _localForward * (sparks ? 0 : 5) * Mathf.Clamp(_averageResourceAmount, 0.5f, 1.0f);
+                ParticleEmitter particleEmitter = leak.GetComponent<ParticleEmitter>();
 
-                leak.particleEmitter.maxEnergy = 0.5f;
-                leak.particleEmitter.minSize = sparks ? 0.01f : _averageResourceAmount * 0.025f;
-                leak.particleEmitter.maxSize = sparks ? 0.02f : _averageResourceAmount * 0.05f;
+                particleEmitter.emit = leaking;
+                particleEmitter.localVelocity = _localForward * (sparks ? 0 : 5) * Mathf.Clamp(_averageResourceAmount, 0.5f, 1.0f);
+
+                particleEmitter.maxEnergy = 0.5f;
+                particleEmitter.minSize = sparks ? 0.01f : _averageResourceAmount * 0.025f;
+                particleEmitter.maxSize = sparks ? 0.02f : _averageResourceAmount * 0.05f;
 
                 //Flow rate * number of resources vented * current time step * thrust coefficient (assuming ISP of ~65)
                 float appliedForce = (sparks ? 0 : 5) * _averageResourceAmount * Time.fixedDeltaTime * .65f;
-                this.rigidbody.AddRelativeForce(leak.transform.forward * appliedForce);
+                this.GetComponent<Rigidbody>().AddRelativeForce(leak.transform.forward * appliedForce);
             }
         }
 
@@ -152,20 +154,22 @@ namespace KerbalKrashSystem_Leak
             //Leak away from the center of this part.
             leak.transform.LookAt(part.transform.TransformPoint(new Vector3(0, krash.ContactPoint.y, 0)), leak.transform.up);
 
-            //Give the leak some speed.
-            leak.particleEmitter.localVelocity = _localForward * (sparks ? 0 : 5);
-            leak.particleEmitter.rndRotation = sparks;
-            leak.particleEmitter.rndAngularVelocity = sparks ? 1 : 0;
-            leak.particleEmitter.rndVelocity = sparks ? Vector3.one : Vector3.zero;
+            ParticleEmitter particleEmitter = leak.GetComponent<ParticleEmitter>();
 
-            leak.particleEmitter.minSize = sparks ? 0.01f : 0.025f;
-            leak.particleEmitter.maxSize = sparks ? 0.02f : 0.05f;
-            leak.particleEmitter.useWorldSpace = false;
-            leak.particleEmitter.maxEnergy = 0.5f;
-            leak.particleEmitter.maxEmission = sparks ? 25 : 50; 
+            //Give the leak some speed.
+            particleEmitter.localVelocity = _localForward * (sparks ? 0 : 5);
+            particleEmitter.rndRotation = sparks;
+            particleEmitter.rndAngularVelocity = sparks ? 1 : 0;
+            particleEmitter.rndVelocity = sparks ? Vector3.one : Vector3.zero;
+
+            particleEmitter.minSize = sparks ? 0.01f : 0.025f;
+            particleEmitter.maxSize = sparks ? 0.02f : 0.05f;
+            particleEmitter.useWorldSpace = false;
+            particleEmitter.maxEnergy = 0.5f;
+            particleEmitter.maxEmission = sparks ? 25 : 50;
 
             //Start emiting particles from leak.
-            leak.particleEmitter.emit = true;
+            particleEmitter.emit = true;
 
             //Save reference to this leak.
             _leaks.Add(leak);
@@ -192,7 +196,8 @@ namespace KerbalKrashSystem_Leak
             GameObject leak = _leaks[_leaks.Count - 1];
 
             //Stop and remove leak.
-            leak.particleEmitter.emit = false;
+            leak.GetComponent<ParticleEmitter>().emit = false;
+
             _leaks.Remove(leak);
             leak.DestroyGameObject();
             leak = null;
@@ -208,7 +213,7 @@ namespace KerbalKrashSystem_Leak
                     GameObject l = _leaks[i];
 
                     //Stop and remove leak.
-                    l.particleEmitter.emit = false;
+                    l.GetComponent<ParticleEmitter>().emit = false;
                     l.DestroyGameObject();
                     l = null;
                 }

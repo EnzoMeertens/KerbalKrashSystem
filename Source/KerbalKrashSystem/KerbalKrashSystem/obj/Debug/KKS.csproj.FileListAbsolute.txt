@@ -25,4 +25,9 @@ C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSyst
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\bin\Debug\Mono.Security.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\obj\Debug\KerbalKrashSystem.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\obj\Debug\KerbalKrashSystem.pdb
-C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\obj\Debug\KKS.csprojResolveAssemblyReference.cache
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\bin\Debug\KSPUtil.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\bin\Debug\SaveUpgradePipeline.Core.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\bin\Debug\UnityEngine.UI.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\bin\Debug\KSPAssets.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\bin\Debug\Vectrosity.dll
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\bin\Debug\UnityEngine.xml
