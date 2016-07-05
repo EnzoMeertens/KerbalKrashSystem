@@ -1,6 +1,8 @@
 ﻿using System.Collections.Generic;
 using KIS;
 using KKS;
+using UnityEngine;
+using MSN;
 
 namespace KerbalKrashSystem_KIS_Repair
 {
@@ -21,11 +23,18 @@ namespace KerbalKrashSystem_KIS_Repair
             if (_kerbalKrash == null)
                 return;
 
-            //TODO: Add script to Kerbal, Kerbal to this.
-            _kerbalKrash.DamageReceived += _kerbalKrash_DamageReceived;
-            _kerbalKrash.DamageRepaired += _kerbalKrash_DamageReceived;
+            Messenger.Events += OnEquip;
+            Messenger.Events += OnUnequip;
+        }
 
-            KerbalKrashSystem_KIS_Helper.EquipmentChanged += KerbalKrashSystem_KIS_Helper_EquipmentChanged;
+        public void OnEquip(object[] args)
+        {
+            Debug.Log("KIS_Repair received OnEquip: " + args[1] + ": " + args[0]);
+        }
+
+        public void OnUnequip(object[] args)
+        {
+            Debug.Log("KIS_Repair received OnUnequip: " + args[1] + ": " + args[0]);
         }
 
         /// <summary>
@@ -39,7 +48,8 @@ namespace KerbalKrashSystem_KIS_Repair
             _kerbalKrash.DamageReceived -= _kerbalKrash_DamageReceived;
             _kerbalKrash.DamageRepaired -= _kerbalKrash_DamageReceived;
 
-            KerbalKrashSystem_KIS_Helper.EquipmentChanged -= KerbalKrashSystem_KIS_Helper_EquipmentChanged;
+            Messenger.Events -= OnEquip;
+            Messenger.Events -= OnUnequip;
         }
 
         void _kerbalKrash_DamageReceived(KerbalKrashSystem sender, float damage)

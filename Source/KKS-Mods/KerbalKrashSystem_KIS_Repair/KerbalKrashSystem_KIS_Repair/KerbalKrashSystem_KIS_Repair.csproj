@@ -41,11 +41,15 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>D:\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KerbalKrashSystem.dll</HintPath>
     </Reference>
-    <Reference Include="KIS">
+    <Reference Include="KIS, Version=1.2.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Downloads\KIS_v1.2.10\GameData\KIS\Plugins\KIS.dll</HintPath>
     </Reference>
     <Reference Include="KSPUtil">
       <HintPath>D:\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\KSPUtil.dll</HintPath>
+    </Reference>
+    <Reference Include="Messenger">
+      <HintPath>D:\Steam\steamapps\common\Kerbal Space Program\GameData\Messenger\Plugins\Messenger.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -56,7 +60,6 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="KerbalKrashSystem_KIS_Helper.cs" />
     <Compile Include="KerbalKrashSystem_KIS_Repair.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

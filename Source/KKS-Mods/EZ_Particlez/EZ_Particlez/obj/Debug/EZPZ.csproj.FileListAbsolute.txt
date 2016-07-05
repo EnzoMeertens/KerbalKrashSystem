@@ -20,7 +20,6 @@ C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\EZ_Par
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\EZ_Particlez\EZ_Particlez\bin\Debug\Mono.Security.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\EZ_Particlez\EZ_Particlez\obj\Debug\EZ_Particlez.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\EZ_Particlez\EZ_Particlez\obj\Debug\EZ_Particlez.pdb
-C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\EZ_Particlez\EZ_Particlez\obj\Debug\EZPZ.csprojResolveAssemblyReference.cache
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\EZ_Particlez\EZ_Particlez\bin\Debug\KSPUtil.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\EZ_Particlez\EZ_Particlez\bin\Debug\SaveUpgradePipeline.Core.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\EZ_Particlez\EZ_Particlez\bin\Debug\UnityEngine.UI.dll
