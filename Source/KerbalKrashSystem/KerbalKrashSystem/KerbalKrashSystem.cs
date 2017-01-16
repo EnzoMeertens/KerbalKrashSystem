@@ -153,11 +153,11 @@ namespace KKS
         /// </summary>
         private int _collisionDelayCounter = 0;
 
-        private MeshFilter[] _meshFilters = null;
+        private List<MeshFilter> _meshFilters = null;
         /// <summary>
         /// Returns all meshes of this part.
         /// </summary>
-        private MeshFilter[] meshFilters
+        private List<MeshFilter> meshFilters
         {
             get
             {
@@ -198,6 +198,7 @@ namespace KKS
             }
         }
 
+        private Color32[] Colors { get; set; }
         #endregion
         #endregion
 
@@ -215,11 +216,11 @@ namespace KKS
                 return;
 
             #region Restore mesh
-            //TODO: This can probably be optimized by storing the variables. But that would increase RAM usage(?)
-            MeshFilter[] currentMeshFilters = part.FindModelComponents<MeshFilter>();
-            MeshFilter[] originalMeshFilters = part.partInfo.partPrefab.FindModelComponents<MeshFilter>();
+            //TODO: This can probably be optimized by storing the variables. But that would increase permanent RAM usage(?)
+            List<MeshFilter> currentMeshFilters = part.FindModelComponents<MeshFilter>();
+            List<MeshFilter> originalMeshFilters = part.partInfo.partPrefab.FindModelComponents<MeshFilter>();
 
-            for(int i = 0; i < currentMeshFilters.Length; i++)
+            for(int i = 0; i < currentMeshFilters.Count; i++)
                 currentMeshFilters[i].mesh = originalMeshFilters[i].mesh;
             #endregion
 
@@ -234,18 +235,11 @@ namespace KKS
             Damage = 0;
 
             if(count < 0)
-            {
-                //Get absolute value of count.
-                count *= -1;
-
                 //Remove the last krashes.
-                Krashes.RemoveRange(Krashes.Count - count, count);
-            }
+                Krashes.RemoveRange(Krashes.Count + count, -count);
             else
-            {
                 //Remove the first krashes.
                 Krashes.RemoveRange(0, count);
-            }
 
             //Apply all remaining krashes.
             foreach (Krash krash in Krashes)
@@ -276,7 +270,7 @@ namespace KKS
             if (_exclude)
                 return;
 
-            Vector3 transform = (relativeVelocity / (1f * part.partInfo.partSize) / (part.crashTolerance / Malleability));
+            Vector3 transform = (relativeVelocity / (0.75f * part.partInfo.partSize) / (part.crashTolerance / Malleability));
             Vector3 worldPosition = part.transform.TransformPoint(krash.ContactPoint);
 
             DeformMesh(transform, worldPosition);
@@ -311,14 +305,24 @@ namespace KKS
                 Vector3 transformT = meshFilter.transform.InverseTransformVector(transform);
                 Vector3 contactPointLocal = meshFilter.transform.InverseTransformPoint(worldPosition);
                 Vector3 dentDistanceLocal = meshFilter.transform.TransformDirection(Vector3.one).normalized;
+
                 dentDistanceLocal = meshFilter.transform.InverseTransformVector(DentDistance * dentDistanceLocal);
                 dentDistanceLocal = Vector3.Max(-dentDistanceLocal, dentDistanceLocal);
+
                 Vector3 dentDistanceInv;
                 dentDistanceInv.x = invSqrt3 / dentDistanceLocal.x;
                 dentDistanceInv.y = invSqrt3 / dentDistanceLocal.y;
                 dentDistanceInv.z = invSqrt3 / dentDistanceLocal.z;
 
                 Vector3[] vertices = mesh.vertices;
+
+                bool fill = false;
+
+                if (fill = (Colors == null))
+                {
+                    Debug.Log("Colors array was null. Now filling...");
+                    Colors = new Color32[vertices.Length];
+                }
 
                 for (int i = 0; i < vertices.Length; i++)
                 {
@@ -327,13 +331,21 @@ namespace KKS
                     distance = dentDistanceLocal - distance;
                     distance.Scale(dentDistanceInv);
 
+                    if (fill)
+                        Colors[i] = new Color32(255, 255, 255, 255);
+
                     if (distance.x < 0 || distance.y < 0 || distance.z < 0)
                         continue;
+
+                    Colors[i] = Color32.Lerp(new Color32(255, 255, 255, 255), new Color(0, 0, 0, 255), Damage);
 
                     vertices[i] += distance.sqrMagnitude * transformT;
                 }
 
                 mesh.vertices = vertices;
+
+                //TODO: Make this a KKS-mod
+                //mesh.colors32 = Colors;
             }
         }
 
@@ -431,7 +443,10 @@ namespace KKS
             //If collision occurs under a large angle, damage is ignored for now.
             //TODO: angle: [70, 90>: SCRAPING. ADD TEXTURES?
             if (angle > 70)
+            {
+                Debug.Log("Angle too steep, no damage.");
                 return;
+            }
 
             //Convert angle to [0, 1].
             angle = Mathf.Cos(Mathf.Deg2Rad * angle);

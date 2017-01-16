@@ -35,16 +35,12 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>D:\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="EZ_Particlez">
-      <HintPath>D:\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalKrashSystem\KKS-mods\KerbalKrashSystem_Leak_Fuel\Plugins\EZPZ\Plugins\EZ_Particlez.dll</HintPath>
-    </Reference>
-    <Reference Include="KerbalKrashSystem, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="EZ_Particlez, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
+      <HintPath>D:\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KKS-mods\KerbalKrashSystem_Leak\Plugins\EZPZ\Plugins\EZ_Particlez.dll</HintPath>
+    </Reference>
+    <Reference Include="KerbalKrashSystem">
       <HintPath>D:\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KerbalKrashSystem.dll</HintPath>
-    </Reference>
-    <Reference Include="KSPUtil, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\KSPUtil.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
