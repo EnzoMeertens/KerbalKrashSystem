@@ -30,3 +30,4 @@ C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\Kerbal
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\bin\Debug\UnityEngine.xml
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\bin\Debug\EZ_Particlez.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\bin\Debug\EZ_Particlez.pdb
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\obj\Debug\KerbalKrashSystem_Leak.csprojResolveAssemblyReference.cache

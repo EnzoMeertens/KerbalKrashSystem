@@ -1,4 +1,5 @@
 ﻿//Do not use Linq, KSP doesn't like Linq.
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -83,14 +84,11 @@ namespace KKS
         /// Value indicating the scaling of the krash tolerance of the part.
         /// Tolerances are scaled to create a margin for damaging instead of exploding.
         /// </summary>
+        /// This value can not be negative.
         protected float ToleranceScaling
         {
             get { return _toleranceScaling; }
-            set
-            {
-                _toleranceScaling = value;
-                part.crashTolerance = OriginalCrashTolerance * ToleranceScaling;
-            }
+            set { _toleranceScaling = Mathf.Abs(value); }
         }
 
         [KSPField(guiName = "Malleability", guiActive = false)]
@@ -114,6 +112,7 @@ namespace KKS
         protected float HorizontalSplashdownScaling
         {
             get { return _horizontalSplashdownScaling; }
+            set { _horizontalSplashdownScaling = Mathf.Abs(value); }
         }
 
         /// <summary>
@@ -197,8 +196,6 @@ namespace KKS
                 return _colliderMesh;
             }
         }
-
-        private Color32[] Colors { get; set; }
         #endregion
         #endregion
 
@@ -315,14 +312,7 @@ namespace KKS
                 dentDistanceInv.z = invSqrt3 / dentDistanceLocal.z;
 
                 Vector3[] vertices = mesh.vertices;
-
-                bool fill = false;
-
-                if (fill = (Colors == null))
-                {
-                    Debug.Log("Colors array was null. Now filling...");
-                    Colors = new Color32[vertices.Length];
-                }
+                Color32[] Colors = new Color32[vertices.Length];
 
                 for (int i = 0; i < vertices.Length; i++)
                 {
@@ -330,9 +320,6 @@ namespace KKS
                     distance = Vector3.Max(-distance, distance);
                     distance = dentDistanceLocal - distance;
                     distance.Scale(dentDistanceInv);
-
-                    if (fill)
-                        Colors[i] = new Color32(255, 255, 255, 255);
 
                     if (distance.x < 0 || distance.y < 0 || distance.z < 0)
                         continue;
@@ -390,13 +377,27 @@ namespace KKS
 
         #region Events/Callbacks
         #region OnEnable(d)/Disable(d)
+        bool _valid = false;
+
         private void OnEnable()
         {
             if (!HighLogic.LoadedSceneIsFlight)
                 return; //Only needed in Flight Scene.
 
+            //TODO: This is an ugly temporary fix, because command pods throw multiple disable events on revert to launch.
+            if (part.name.Contains("(unloaded)"))
+                return;
+
+            _valid = false;
+
+            //TODO: This is an ugly temporary fix, because command pods throw multiple disable events on revert to launch.
+            GameEvents.onShowUI.Add(OnUI);
+
+            //Save the original crash tolerance value.
             OriginalCrashTolerance = part.crashTolerance;
-            ToleranceScaling = ToleranceScaling;
+
+            //Set the part's new crash tolerance.
+            part.crashTolerance = OriginalCrashTolerance * _toleranceScaling;
 
             //Register the OnSplashDown event.
             Splashdown += OnSplashdown;
@@ -407,11 +408,26 @@ namespace KKS
 
         private void OnDisable()
         {
+            //TODO: This is an ugly temporary fix, because command pods throw multiple disable events on revert to launch.
+            if (!_valid)
+                return;
+
+            GameEvents.onShowUI.Remove(OnUI);
+
+            //Reset part's crash tolerance back to original value.
+            part.crashTolerance = OriginalCrashTolerance;
+
             //Unregister the OnSplashDown event.
             Splashdown -= OnSplashdown;
 
             //Invoke OnDisabled function on derived classes.
             OnDisabled();
+        }
+
+        //TODO: This is an ugly temporary fix, because command pods throw multiple disable events on revert to launch.
+        private void OnUI()
+        {
+            _valid = true;
         }
 
         /// <summary>
@@ -444,7 +460,7 @@ namespace KKS
             //TODO: angle: [70, 90>: SCRAPING. ADD TEXTURES?
             if (angle > 70)
             {
-                Debug.Log("Angle too steep, no damage.");
+                //Debug.Log("Angle too steep, no damage.");
                 return;
             }
 

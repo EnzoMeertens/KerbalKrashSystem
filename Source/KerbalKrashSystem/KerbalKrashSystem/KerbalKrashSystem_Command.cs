@@ -6,22 +6,32 @@ namespace KKS
     {
         private bool _wasDamaged = false;
 
+        private GameObject _blockage = null;
+
         protected override void OnEnabled()
         {
-            DamageReceived += ModuleKerbalKrashSystem_Command_DamageReceived;
-            DamageRepaired += ModuleKerbalKrashSystem_Command_DamageRepaired;
+            //TODO: This doesn't work. The command pod gets called twice on a revert to launch.
+            //DamageReceived += ModuleKerbalKrashSystem_Command_DamageReceived;
+            //DamageRepaired += ModuleKerbalKrashSystem_Command_DamageRepaired;
         }
 
         protected override void OnDisabled()
         {
-            DamageReceived -= ModuleKerbalKrashSystem_Command_DamageReceived;
-            DamageRepaired += ModuleKerbalKrashSystem_Command_DamageRepaired;
+            //TODO: This doesn't work. The command pod gets called twice on a revert to launch.
+            //DamageReceived -= ModuleKerbalKrashSystem_Command_DamageReceived;
+            //DamageRepaired -= ModuleKerbalKrashSystem_Command_DamageRepaired;
         }
 
         private void ModuleKerbalKrashSystem_Command_DamageReceived(KerbalKrashSystem sender, float damage)
         {
-            if (damage < DamageThreshold || _wasDamaged)
+            if (damage < DamageThreshold || _wasDamaged || part.airlock == null)
                 return;
+
+            _blockage = new GameObject("blockage");
+            _blockage.AddComponent<Collider>();
+            _blockage.transform.localScale = Vector3.one * 2f;
+            _blockage.transform.parent = part.transform;
+            _blockage.transform.localPosition = part.airlock.localPosition;
 
             _wasDamaged = true;
 

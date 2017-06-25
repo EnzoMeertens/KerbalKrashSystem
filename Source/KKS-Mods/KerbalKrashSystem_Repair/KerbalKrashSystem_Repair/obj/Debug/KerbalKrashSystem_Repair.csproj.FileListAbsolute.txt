@@ -30,3 +30,4 @@ C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\Kerbal
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Repair\KerbalKrashSystem_Repair\bin\Debug\UnityEngine.UI.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Repair\KerbalKrashSystem_Repair\bin\Debug\KSPAssets.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Repair\KerbalKrashSystem_Repair\bin\Debug\UnityEngine.xml
+C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Repair\KerbalKrashSystem_Repair\obj\Debug\KerbalKrashSystem_Repair.csprojResolveAssemblyReference.cache
