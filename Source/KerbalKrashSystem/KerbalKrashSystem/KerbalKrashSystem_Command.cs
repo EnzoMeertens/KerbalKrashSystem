@@ -10,16 +10,18 @@ namespace KKS
 
         protected override void OnEnabled()
         {
-            //TODO: This doesn't work. The command pod gets called twice on a revert to launch.
-            //DamageReceived += ModuleKerbalKrashSystem_Command_DamageReceived;
-            //DamageRepaired += ModuleKerbalKrashSystem_Command_DamageRepaired;
+            _wasDamaged = false;
+
+            DamageReceived += ModuleKerbalKrashSystem_Command_DamageReceived;
+            DamageRepaired += ModuleKerbalKrashSystem_Command_DamageRepaired;
         }
 
         protected override void OnDisabled()
         {
-            //TODO: This doesn't work. The command pod gets called twice on a revert to launch.
-            //DamageReceived -= ModuleKerbalKrashSystem_Command_DamageReceived;
-            //DamageRepaired -= ModuleKerbalKrashSystem_Command_DamageRepaired;
+            _wasDamaged = false;
+
+            DamageReceived -= ModuleKerbalKrashSystem_Command_DamageReceived;
+            DamageRepaired -= ModuleKerbalKrashSystem_Command_DamageRepaired;
         }
 
         private void ModuleKerbalKrashSystem_Command_DamageReceived(KerbalKrashSystem sender, float damage)
@@ -27,11 +29,15 @@ namespace KKS
             if (damage < DamageThreshold || _wasDamaged || part.airlock == null)
                 return;
 
+            //Add an airlock blockage to prevent Kerbals from exiting.
             _blockage = new GameObject("blockage");
-            _blockage.AddComponent<Collider>();
-            _blockage.transform.localScale = Vector3.one * 2f;
-            _blockage.transform.parent = part.transform;
-            _blockage.transform.localPosition = part.airlock.localPosition;
+            _blockage.AddComponent<BoxCollider>().isTrigger = true;
+            _blockage.AddComponent<Rigidbody>().isKinematic = false;
+            _blockage.transform.parent = part.airlock;
+            _blockage.transform.position = part.airlock.position;
+            _blockage.transform.rotation = part.airlock.rotation;
+            _blockage.AddComponent<FixedJoint>().connectedBody = part.Rigidbody;
+            _blockage.transform.localScale = new Vector3(0.25f, 0.25f, 0.05f);
 
             _wasDamaged = true;
 
@@ -42,6 +48,9 @@ namespace KKS
         {
             if (damage >= DamageThreshold || !_wasDamaged)
                 return;
+
+            //Get rid of airlock blockage.
+            Destroy(_blockage);
 
             _wasDamaged = false;
 

@@ -144,14 +144,6 @@ namespace KKS
         /// </summary>
         private const int _collisionDelay = 5;
 
-        /// <summary>
-        /// Help variable to prevent "infinite" collisions. 
-        /// In some cases the collider gets deformed into the path of the 
-        /// collision direction, which deforms the collider into the path 
-        /// of the collision.
-        /// </summary>
-        private int _collisionDelayCounter = 0;
-
         private List<MeshFilter> _meshFilters = null;
         /// <summary>
         /// Returns all meshes of this part.
@@ -258,7 +250,13 @@ namespace KKS
         {
             Vector3 relativeVelocity = part.transform.TransformDirection(krash.RelativeVelocity); //Transform the direction of the collision to the world reference frame.
 
+            //Remove previous log entry.
+            FlightLogger.eventLog.Remove($"{part.name} (ID: {part.flightID}) was damaged {(Damage * 100).ToString("0.00")}%");
+
             Damage += (relativeVelocity.magnitude / part.crashTolerance) / _damageDivider;
+
+            //Add new log entry.
+            FlightLogger.eventLog.Add($"{part.name} (ID: {part.flightID}) was damaged {(Damage * 100).ToString("0.00")}%");
 
             //Fire "DamageReceived" event.
             if (fireEvent && DamageReceived != null)
@@ -377,27 +375,25 @@ namespace KKS
 
         #region Events/Callbacks
         #region OnEnable(d)/Disable(d)
-        bool _valid = false;
-
-        private void OnEnable()
+        public override void OnStartFinished(StartState state)
         {
+            base.OnStartFinished(state);
+            //TODO: This also applies to kerbals. Shouldn't happen.
             if (!HighLogic.LoadedSceneIsFlight)
                 return; //Only needed in Flight Scene.
-
-            //TODO: This is an ugly temporary fix, because command pods throw multiple disable events on revert to launch.
-            if (part.name.Contains("(unloaded)"))
-                return;
-
-            _valid = false;
-
-            //TODO: This is an ugly temporary fix, because command pods throw multiple disable events on revert to launch.
-            GameEvents.onShowUI.Add(OnUI);
+#if DEBUG
+            Debug.Log($"OnStartFinished: part.name: {part.name}");
+#endif
 
             //Save the original crash tolerance value.
             OriginalCrashTolerance = part.crashTolerance;
 
             //Set the part's new crash tolerance.
             part.crashTolerance = OriginalCrashTolerance * _toleranceScaling;
+
+#if DEBUG
+            Debug.Log($"OnStartFinished: part.name: {part.name}, OriginalCrashTolerance: {OriginalCrashTolerance} / part.crashTolerance: {part.crashTolerance}");
+#endif
 
             //Register the OnSplashDown event.
             Splashdown += OnSplashdown;
@@ -408,11 +404,11 @@ namespace KKS
 
         private void OnDisable()
         {
-            //TODO: This is an ugly temporary fix, because command pods throw multiple disable events on revert to launch.
-            if (!_valid)
-                return;
-
-            GameEvents.onShowUI.Remove(OnUI);
+            if (!HighLogic.LoadedSceneIsFlight)
+                return; //Only needed in Flight Scene.
+#if DEBUG
+            Debug.Log($"OnDisable: part.name: {part.name}");
+#endif
 
             //Reset part's crash tolerance back to original value.
             part.crashTolerance = OriginalCrashTolerance;
@@ -422,12 +418,6 @@ namespace KKS
 
             //Invoke OnDisabled function on derived classes.
             OnDisabled();
-        }
-
-        //TODO: This is an ugly temporary fix, because command pods throw multiple disable events on revert to launch.
-        private void OnUI()
-        {
-            _valid = true;
         }
 
         /// <summary>
@@ -457,25 +447,20 @@ namespace KKS
             float angle = Vector3.Angle(relativeVelocity, part.transform.InverseTransformDirection(collision.contacts[0].normal));
 
             //If collision occurs under a large angle, damage is ignored for now.
-            //TODO: angle: [70, 90>: SCRAPING. ADD TEXTURES?
-            if (angle > 70)
-            {
-                //Debug.Log("Angle too steep, no damage.");
-                return;
-            }
+//            if (angle > 70)
+//            {
+//                //TODO: angle: [70, 90>: SCRAPING. ADD TEXTURES?
+//#if DEBUG
+//                Debug.Log("Angle too steep, no damage.");
+//#endif
+//                return;
+//            }
 
             //Convert angle to [0, 1].
             angle = Mathf.Cos(Mathf.Deg2Rad * angle);
 
             //Scale the impact velocity by the angle. 
             relativeVelocity *= angle;
-
-            ////Limit collisions to one per collision delay.
-            //if (_collisionDelayCounter < _collisionDelay)
-            //    return;
-
-            ////Reset the physics counter.
-            //_collisionDelayCounter = 0;
 
             //Only receive damage if part exists and relative velocity is greater than the original tolerance divided malleability of the part.
             if (part == null || relativeVelocity.magnitude <= OriginalCrashTolerance)
@@ -516,9 +501,6 @@ namespace KKS
                 _splashed = false;
                 return;
             }
-
-            //if (_collisionDelayCounter < _collisionDelay)
-            //    _collisionDelayCounter++;
 
             //Get the altitude of the part, instead of the altitude of the vessel.
             double partAltitude = FlightGlobals.getAltitudeAtPos(part.transform.position, FlightGlobals.currentMainBody);
@@ -579,9 +561,9 @@ namespace KKS
                 krashNode.AddValue("ContactPoint.z", krash.ContactPoint.z);
             }
 
-            #if DEBUG
-                Debug.Log("[KerbalKrashSystem] Saved " + Krashes.Count +  " krashes for part ID: " + part.flightID);
-            #endif
+#if DEBUG
+            Debug.Log($"[KerbalKrashSystem] Saved {Krashes.Count} krashes for {part.name} (part ID: {part.flightID}");
+#endif
         }
         #endregion
 
@@ -597,6 +579,10 @@ namespace KKS
             //No need to load krashes when not in Flight Scene or non-existent parts/vessels.
             if (!HighLogic.LoadedSceneIsFlight || part == null || part.vessel == null)
                 return;
+
+#if DEBUG
+            Debug.Log($"OnLoad: {part.name}");
+#endif
 
             //Clear damage and krashes.
             Damage = 0;
@@ -624,10 +610,10 @@ namespace KKS
                 ApplyKrash(krash);
             }
 
-            #if DEBUG
+#if DEBUG
             if (Krashes.Count > 0)
-                Debug.Log("[KerbalKrashSystem] Applied " + Krashes.Count + " krashes for part ID: " + part.flightID);
-            #endif
+                Debug.Log($"[KerbalKrashSystem] Loaded {Krashes.Count} krashes for {part.name} (part ID: {part.flightID})");
+#endif
         }
         #endregion
         #endregion

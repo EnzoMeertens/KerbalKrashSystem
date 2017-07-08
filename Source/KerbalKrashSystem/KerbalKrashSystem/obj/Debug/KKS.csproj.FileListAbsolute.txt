@@ -28,4 +28,3 @@ C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSyst
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\bin\Debug\UnityEngine.UI.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\bin\Debug\KSPAssets.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\bin\Debug\UnityEngine.xml
-C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\obj\Debug\KKS.csprojResolveAssemblyReference.cache
