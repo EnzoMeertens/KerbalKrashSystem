@@ -1,6 +1,4 @@
-﻿//Do not use Linq, KSP doesn't like Linq.
-using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
 namespace KKS
@@ -122,14 +120,30 @@ namespace KKS
         {
             get { return part.partInfo.partSize / 5f; }
         }
+
+        [KSPField(guiName = "Subdivide mesh", guiActive = false)]
+        public bool _subdivideMesh = true;
+        /// <summary>
+        /// Boolean value indication whether or not to subdivide the part's mesh (if larger than the MeshSubdivisionThreshold).
+        /// </summary>
+        protected bool SubdivideMesh { get { return _subdivideMesh; } }
+
+        [KSPField(guiName = "Subdivide collider", guiActive = false)]
+        public bool _subdivideCollider = true;
+        /// <summary>
+        /// Boolean value indication whether or not to subdivide the part's collider mesh (if larger than the MeshSubdivisionThreshold).
+        /// </summary>
+        protected bool SubdivideCollider { get { return _subdivideCollider; } }
+
+        [KSPField(guiName = "Mesh subdivision threshold", guiActive = false)]
+        public float _meshSubdivisionThreshold = 5.5f;
+        /// <summary>
+        /// The threshold where a part's mesh is subdivided for higher resolution collisions.
+        /// </summary>
+        protected float MeshSubdivisionThreshold { get { return _meshSubdivisionThreshold; } }
         #endregion
 
         #region Private fields
-        /// <summary>
-        /// Calculation help constant: (approx.) 1 / √(3).
-        /// </summary>
-        private const float invSqrt3 = 0.57735026919f;
-
         /// <summary>
         /// Help variable to calculate splashdown damage only once per splashdown.
         /// </summary>
@@ -137,12 +151,14 @@ namespace KKS
         private bool _splashed = false;
 
         /// <summary>
-        /// Help constant (in units of 0.02 seconds) to prevent "infinite" collisions. 
-        /// In some cases the collider gets deformed into the path of the 
-        /// collision direction, which deforms the collider into the path 
-        /// of the collision.
+        /// Help variable to subdivide part mesh only once (unless repaired).
         /// </summary>
-        private const int _collisionDelay = 5;
+        private bool subdivided_mesh = false;
+
+        /// <summary>
+        /// Help variable to subdivide part collider only once (unless repaired).
+        /// </summary>
+        private bool subdivided_collider = false;
 
         private List<MeshFilter> _meshFilters = null;
         /// <summary>
@@ -205,12 +221,14 @@ namespace KKS
                 return;
 
             #region Restore mesh
-            //TODO: This can probably be optimized by storing the variables. But that would increase permanent RAM usage(?)
             List<MeshFilter> currentMeshFilters = part.FindModelComponents<MeshFilter>();
             List<MeshFilter> originalMeshFilters = part.partInfo.partPrefab.FindModelComponents<MeshFilter>();
 
             for(int i = 0; i < currentMeshFilters.Count; i++)
                 currentMeshFilters[i].mesh = originalMeshFilters[i].mesh;
+
+            //TODO: Is there a better way?
+            subdivided_mesh = false;
             #endregion
 
             #region Restore collider
@@ -239,8 +257,108 @@ namespace KKS
                 DamageRepaired(this, Damage);
         }
 
-        //private bool subdivided = false;
+        #region Working
+        ///// <summary>
+        ///// Calculation help constant: (approx.) 1 / √(3).
+        ///// </summary>
+        //private const float invSqrt3 = 0.57735026919f;
 
+        ///// <summary>
+        ///// Apply krash to all meshes in this part.
+        ///// </summary>
+        ///// <param name="krash">Krash to apply.</param>
+        ///// <param name="fireEvent">Fire "DamageReceived" event.</param>
+        //public void ApplyKrash(Krash krash, bool fireEvent = true)
+        //{
+        //    Vector3 relativeVelocity = part.transform.TransformDirection(krash.RelativeVelocity); //Transform the direction of the collision to the world reference frame.
+
+        //    //Remove previous log entry.
+        //    FlightLogger.eventLog.Remove($"{part.name} (ID: {part.flightID}) was damaged {(Damage * 100).ToString("0.00")}%");
+
+        //    Damage += (relativeVelocity.magnitude / part.crashTolerance) / _damageDivider;
+
+        //    //Add new log entry.
+        //    FlightLogger.eventLog.Add($"{part.name} (ID: {part.flightID}) was damaged {(Damage * 100).ToString("0.00")}%");
+
+        //    //Fire "DamageReceived" event.
+        //    if (fireEvent && DamageReceived != null)
+        //        DamageReceived(this, Damage);
+
+        //    if (_exclude)
+        //        return;
+
+        //    //Dent transformation is a maximum of 75% of the part size.
+        //    Vector3 transform = (relativeVelocity / (0.75f * part.partInfo.partSize) / (part.crashTolerance / Malleability));
+        //    Vector3 worldPosition = part.transform.TransformPoint(krash.ContactPoint);
+
+        //    DeformMesh(transform, worldPosition);
+
+        //    DeformCollider(transform, worldPosition);
+        //}
+
+        ///// <summary>
+        ///// Updates the visual components of the part.
+        ///// Thanks Ryan Bray (https://github.com/rbray89).
+        ///// </summary>
+        ///// <param name="transform">Vector indicating the amount of deformation.</param>
+        ///// <param name="worldPosition">Position in the world to apply the deformation from.</param>
+        //private void DeformMesh(Vector3 transform, Vector3 worldPosition)
+        //{
+        //    foreach (MeshFilter meshFilter in meshFilters)
+        //    {
+        //        Mesh mesh = meshFilter.mesh;
+
+        //        if (meshFilter.sharedMesh == null)
+        //            continue;
+
+        //        if (mesh == null)
+        //            mesh = meshFilter.sharedMesh;
+
+        //        if (_subdivide && !subdivided && part.partInfo.partSize >= MeshSubdivisionThreshold)
+        //        {
+        //            subdivided = true;
+        //            MeshHelper.Subdivide(mesh, worldPosition, DentDistance);
+        //        }
+
+        //        Vector3 transformT = meshFilter.transform.InverseTransformVector(transform);
+        //        Vector3 contactPointLocal = meshFilter.transform.InverseTransformPoint(worldPosition);
+        //        Vector3 dentDistanceLocal = meshFilter.transform.TransformDirection(Vector3.one).normalized;
+
+        //        dentDistanceLocal = meshFilter.transform.InverseTransformVector(DentDistance * dentDistanceLocal);
+        //        dentDistanceLocal = Vector3.Max(-dentDistanceLocal, dentDistanceLocal);
+
+        //        Vector3 dentDistanceInv;
+        //        dentDistanceInv.x = invSqrt3 / dentDistanceLocal.x;
+        //        dentDistanceInv.y = invSqrt3 / dentDistanceLocal.y;
+        //        dentDistanceInv.z = invSqrt3 / dentDistanceLocal.z;
+
+        //        Vector3[] vertices = mesh.vertices;
+        //        Color32[] Colors = new Color32[vertices.Length];
+
+        //        for (int i = 0; i < vertices.Length; i++)
+        //        {
+        //            Vector3 distance = vertices[i] - contactPointLocal;
+        //            distance = Vector3.Max(-distance, distance);
+        //            distance = dentDistanceLocal - distance;
+        //            distance.Scale(dentDistanceInv);
+
+        //            if (distance.x < 0 || distance.y < 0 || distance.z < 0)
+        //                continue;
+
+        //            Colors[i] = Color32.Lerp(new Color32(255, 255, 255, 255), new Color(0, 0, 0, 255), Damage);
+
+        //            vertices[i] += distance.sqrMagnitude * transformT;
+        //        }
+
+        //        mesh.vertices = vertices;
+
+        //        //TODO: Make this a KKS-mod
+        //        //mesh.colors32 = Colors;
+        //    }
+        //}
+        #endregion
+
+        #region Experimental 
         /// <summary>
         /// Apply krash to all meshes in this part.
         /// </summary>
@@ -265,7 +383,8 @@ namespace KKS
             if (_exclude)
                 return;
 
-            Vector3 transform = (relativeVelocity / (0.75f * part.partInfo.partSize) / (part.crashTolerance / Malleability));
+            //Dent transformation.
+            Vector3 transform = (relativeVelocity / (part.crashTolerance / Malleability));
             Vector3 worldPosition = part.transform.TransformPoint(krash.ContactPoint);
 
             DeformMesh(transform, worldPosition);
@@ -289,50 +408,70 @@ namespace KKS
                     continue;
 
                 if (mesh == null)
-                    mesh = meshFilter.sharedMesh;
+                    mesh = meshFilter.sharedMesh; //No mesh found, use the shared mesh.
 
-                //if (!subdivided && part.partInfo.partSize >= 2)
-                //{
-                //    subdivided = true;
-                //    MeshHelper.Subdivide(mesh, 2, worldPosContact, DentDistance);
-                //}
+                if (_subdivideMesh && !subdivided_mesh && part.partInfo.partSize >= MeshSubdivisionThreshold)
+                {
+#if DEBUG
+                    Debug.Log($"{part.name}: mesh subdivided.");
+#endif
 
-                Vector3 transformT = meshFilter.transform.InverseTransformVector(transform);
-                Vector3 contactPointLocal = meshFilter.transform.InverseTransformPoint(worldPosition);
-                Vector3 dentDistanceLocal = meshFilter.transform.TransformDirection(Vector3.one).normalized;
+                    subdivided_mesh = true;
+                    MeshHelper.Subdivide(mesh, worldPosition, 0);
+                }
+
+                Vector3 transformT = meshFilter.transform.InverseTransformVector(transform); //The amount to dent the mesh (locally).
+                Vector3 contactPointLocal = meshFilter.transform.InverseTransformPoint(worldPosition); //The contact point of the impact (locally).
+                Vector3 dentDistanceLocal = meshFilter.transform.TransformDirection(Vector3.one).normalized; //The maximum dent distance (locally). TODO: Needed?
 
                 dentDistanceLocal = meshFilter.transform.InverseTransformVector(DentDistance * dentDistanceLocal);
-                dentDistanceLocal = Vector3.Max(-dentDistanceLocal, dentDistanceLocal);
-
-                Vector3 dentDistanceInv;
-                dentDistanceInv.x = invSqrt3 / dentDistanceLocal.x;
-                dentDistanceInv.y = invSqrt3 / dentDistanceLocal.y;
-                dentDistanceInv.z = invSqrt3 / dentDistanceLocal.z;
+                dentDistanceLocal = Vector3.Max(-dentDistanceLocal, dentDistanceLocal); //Absolute value.
 
                 Vector3[] vertices = mesh.vertices;
-                Color32[] Colors = new Color32[vertices.Length];
+
+                //TODO: Make this a KKS-mod.
+                //Color32[] Colors = new Color32[vertices.Length];
 
                 for (int i = 0; i < vertices.Length; i++)
                 {
-                    Vector3 distance = vertices[i] - contactPointLocal;
-                    distance = Vector3.Max(-distance, distance);
-                    distance = dentDistanceLocal - distance;
-                    distance.Scale(dentDistanceInv);
+                    Vector3 distance = vertices[i] - contactPointLocal; //Distance between vertex and point of impact.
+                    distance = Vector3.Max(-distance, distance); //Absolute value.
+                    distance = dentDistanceLocal - distance; //Difference between maximum dent distance (locally) and the calculated distance.
+                    distance *= 0.2f; //Scale down the dent distance.
 
+                    //TODO: Make this a KKS-mod.
+                    //Colors[i] = new Color(255, 255, 255, 255);
+
+                    //Distance too far to have any impact on the mesh at this point.
                     if (distance.x < 0 || distance.y < 0 || distance.z < 0)
                         continue;
 
-                    Colors[i] = Color32.Lerp(new Color32(255, 255, 255, 255), new Color(0, 0, 0, 255), Damage);
+                    //TODO: Make this a KKS-mod.
+                    //Colors[i] = Color32.Lerp(new Color32(255, 255, 255, 255), new Color(0, 0, 0, 255), Damage / 10f);
 
-                    vertices[i] += distance.sqrMagnitude * transformT;
+                    distance.Scale(transformT);
+                    vertices[i] += distance;
                 }
 
                 mesh.vertices = vertices;
-
-                //TODO: Make this a KKS-mod
+                
+                //TODO: Make this a KKS-mod.
                 //mesh.colors32 = Colors;
+
+                #region Colliders are computationally intensive. Accurate collisions means more processing power required.
+                //if (meshCollider == null || colliderMesh == null)
+                //    return; //Nothing to deform.
+
+                //Vector3 rotation = meshCollider.transform.localEulerAngles;
+                //Destroy(meshCollider);
+                //_meshCollider = part.gameObject.AddComponent<MeshCollider>();
+                //_meshCollider.transform.localEulerAngles = rotation;
+                //meshCollider.convex = true;
+                //meshCollider.sharedMesh = mesh;
+                #endregion
             }
         }
+        #endregion
 
         /// <summary>
         /// Updates the collider component of the part.
@@ -344,32 +483,42 @@ namespace KKS
             if (meshCollider == null || colliderMesh == null)
                 return; //Nothing to deform.
 
-            Vector3 transformT = meshCollider.transform.InverseTransformVector(transform);
-            Vector3 contactPointLocal = meshCollider.transform.InverseTransformPoint(worldPosition);
+            if (_subdivideCollider && !subdivided_collider && part.partInfo.partSize >= MeshSubdivisionThreshold)
+            {
+#if DEBUG
+                Debug.Log($"{part.name}: collider subdivided.");
+#endif
+                subdivided_collider = true;
+                MeshHelper.Subdivide(colliderMesh, worldPosition, 0);
+            }
 
-            Vector3 dentDistanceLocal = meshCollider.transform.TransformDirection(Vector3.one).normalized;
+            Vector3 transformT = meshCollider.transform.InverseTransformVector(transform); //The amount to dent the mesh (locally).
+            Vector3 contactPointLocal = meshCollider.transform.InverseTransformPoint(worldPosition); //The contact point of the impact (locally).
+
+            Vector3 dentDistanceLocal = meshCollider.transform.TransformDirection(Vector3.one).normalized; //Distance between vertex and point of impact.
             dentDistanceLocal = meshCollider.transform.InverseTransformVector(DentDistance * dentDistanceLocal);
-            dentDistanceLocal = Vector3.Max(-dentDistanceLocal, dentDistanceLocal);
-
-            Vector3 dentDistanceInv = new Vector3(invSqrt3 / dentDistanceLocal.x, invSqrt3 / dentDistanceLocal.y, invSqrt3 / dentDistanceLocal.z);
+            dentDistanceLocal = Vector3.Max(-dentDistanceLocal, dentDistanceLocal); //Absolute value.
 
             Vector3[] vertices = colliderMesh.vertices;
 
             for (int i = 0; i < vertices.Length; i++)
             {
-                Vector3 distance = vertices[i] - contactPointLocal;
-                distance = Vector3.Max(-distance, distance);
-                distance = dentDistanceLocal - distance;
-                distance.Scale(dentDistanceInv);
+                Vector3 distance = vertices[i] - contactPointLocal; //Distance between vertex and point of impact.
+                distance = Vector3.Max(-distance, distance); //Absolute value.
+                distance = dentDistanceLocal - distance; //Difference between maximum dent distance (locally) and the calculated distance.
+                distance *= 0.2f; //Scale down the dent distance.
 
+                //Distance too far to have any impact on the mesh at this point.
                 if (distance.x < 0 || distance.y < 0 || distance.z < 0)
                     continue;
 
-                vertices[i] += distance.sqrMagnitude * transformT;
+                distance.Scale(transformT);
+                vertices[i] += distance;
             }
 
             colliderMesh.vertices = vertices;
-            meshCollider.convex = true;
+            meshCollider.sharedMesh = null;
+            meshCollider.sharedMesh = colliderMesh;
         }
         #endregion
 
@@ -378,11 +527,12 @@ namespace KKS
         public override void OnStartFinished(StartState state)
         {
             base.OnStartFinished(state);
-            //TODO: This also applies to kerbals. Shouldn't happen.
-            if (!HighLogic.LoadedSceneIsFlight)
+
+            if (!HighLogic.LoadedSceneIsFlight || vessel.isEVA)
                 return; //Only needed in Flight Scene.
+
 #if DEBUG
-            Debug.Log($"OnStartFinished: part.name: {part.name}");
+            Debug.Log($"OnStartFinished: part.name: {part.name}, part.partInfo.partSize: {part.partInfo.partSize}, part.prefabSize: {part.prefabSize} (magnitude: {part.prefabSize.magnitude})");
 #endif
 
             //Save the original crash tolerance value.
@@ -390,10 +540,6 @@ namespace KKS
 
             //Set the part's new crash tolerance.
             part.crashTolerance = OriginalCrashTolerance * _toleranceScaling;
-
-#if DEBUG
-            Debug.Log($"OnStartFinished: part.name: {part.name}, OriginalCrashTolerance: {OriginalCrashTolerance} / part.crashTolerance: {part.crashTolerance}");
-#endif
 
             //Register the OnSplashDown event.
             Splashdown += OnSplashdown;
@@ -404,11 +550,8 @@ namespace KKS
 
         private void OnDisable()
         {
-            if (!HighLogic.LoadedSceneIsFlight)
+            if (!HighLogic.LoadedSceneIsFlight || vessel.isEVA)
                 return; //Only needed in Flight Scene.
-#if DEBUG
-            Debug.Log($"OnDisable: part.name: {part.name}");
-#endif
 
             //Reset part's crash tolerance back to original value.
             part.crashTolerance = OriginalCrashTolerance;
@@ -438,7 +581,7 @@ namespace KKS
         /// <param name="collision">Collision object containing information about the collision.</param>
         protected virtual void OnCollisionEnter(Collision collision)
         {
-            if (!HighLogic.LoadedSceneIsFlight)
+            if (!HighLogic.LoadedSceneIsFlight || vessel.isEVA)
                 return;
 
             //Transform the velocity of the collision into the reference frame of the part. 
