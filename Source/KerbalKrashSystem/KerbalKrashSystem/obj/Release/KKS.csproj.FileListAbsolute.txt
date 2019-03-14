@@ -12,3 +12,12 @@ C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSyst
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\bin\Release\UnityEngine.xml
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\obj\Release\KerbalKrashSystem.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\obj\Release\KerbalKrashSystem.pdb
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\bin\Release\KerbalKrashSystem.dll
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\bin\Release\KerbalKrashSystem.pdb
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\obj\Release\KerbalKrashSystem.dll
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\obj\Release\KerbalKrashSystem.pdb
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\bin\Release\Assembly-CSharp.dll
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\bin\Release\UnityEngine.dll
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\obj\Release\KKS.csprojAssemblyReference.cache
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\obj\Release\KKS.csproj.CoreCompileInputs.cache
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\obj\Release\KKS.csproj.CopyComplete

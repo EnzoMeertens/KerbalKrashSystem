@@ -30,12 +30,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\Resources\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="KerbalKrashSystem">
-      <HintPath>D:\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KerbalKrashSystem.dll</HintPath>
+    <Reference Include="KerbalKrashSystem, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\Resources\KerbalKrashSystem.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -45,7 +46,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\Resources\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -54,7 +55,7 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy KerbalKrashSystem_Science.dll "D:\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KKS-mods\KerbalKrashSystem_Science\Plugins\KerbalKrashSystem_Science.dll"</PostBuildEvent>
+    <PostBuildEvent>:: copy KerbalKrashSystem_Science.dll "D:\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KKS-mods\KerbalKrashSystem_Science\Plugins\KerbalKrashSystem_Science.dll"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

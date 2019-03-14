@@ -22,7 +22,7 @@ namespace KKS
             public Vector3 RelativeVelocity;
 
             /// <summary>
-            /// The location of the recorded krash.
+            /// The local position of the recorded krash.
             /// </summary>
             public Vector3 ContactPoint;
 
@@ -528,7 +528,7 @@ namespace KKS
         {
             base.OnStartFinished(state);
 
-            if (!HighLogic.LoadedSceneIsFlight || vessel.isEVA)
+            if (!HighLogic.LoadedSceneIsFlight || (vessel != null && vessel.isEVA))
                 return; //Only needed in Flight Scene.
 
 #if DEBUG
@@ -550,7 +550,7 @@ namespace KKS
 
         private void OnDisable()
         {
-            if (!HighLogic.LoadedSceneIsFlight || vessel.isEVA)
+            if (!HighLogic.LoadedSceneIsFlight || (vessel != null && vessel.isEVA))
                 return; //Only needed in Flight Scene.
 
             //Reset part's crash tolerance back to original value.
@@ -581,7 +581,7 @@ namespace KKS
         /// <param name="collision">Collision object containing information about the collision.</param>
         protected virtual void OnCollisionEnter(Collision collision)
         {
-            if (!HighLogic.LoadedSceneIsFlight || vessel.isEVA)
+            if (!HighLogic.LoadedSceneIsFlight || (vessel != null && vessel.isEVA))
                 return;
 
             //Transform the velocity of the collision into the reference frame of the part. 
@@ -613,12 +613,21 @@ namespace KKS
             if (relativeVelocity.magnitude / part.crashTolerance <= 0)
                 return;
 
+            //Clamp the local position to the bounds of the part.
+            Vector3 local_position = part.transform.InverseTransformPoint(collision.contacts[0].point);
+            local_position = new Vector3
+            (
+                Mathf.Clamp(local_position.x, -part.collider.bounds.extents.x, part.collider.bounds.extents.x),
+                Mathf.Clamp(local_position.y, -part.collider.bounds.extents.y, part.collider.bounds.extents.y),
+                Mathf.Clamp(local_position.z, -part.collider.bounds.extents.z, part.collider.bounds.extents.z)
+            );
+
             Krash krash = new Krash
             {
                 RelativeVelocity = relativeVelocity,
 
                 //Transform the direction of the collision to the reference frame of the part.
-                ContactPoint = part.transform.InverseTransformPoint(collision.contacts[0].point),
+                ContactPoint = local_position,
             };
 
             Krashes.Add(krash);

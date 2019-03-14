@@ -25,9 +25,11 @@ namespace KerbalKrashSystem_Leak
 
             // Make it render a red to yellow triangle, 1 meter wide and 2 meters long
             line.material = new Material(Shader.Find("Particles/Additive"));
-            line.SetColors(start, end);
-            line.SetWidth(0.2f, 0.1f);
-            line.SetVertexCount(2);
+            line.startColor = start;
+            line.endColor = end;
+            line.startWidth = 0.1f;
+            line.endWidth = 0.05f;
+            line.positionCount = 2;
             line.SetPosition(0, Vector3.zero);
             line.SetPosition(1, Vector3.forward * 2);
         }
@@ -48,9 +50,11 @@ namespace KerbalKrashSystem_Leak
 
             // Make it render a red to yellow triangle, 1 meter wide and 2 meters long
             line.material = new Material(Shader.Find("Particles/Additive"));
-            line.SetColors(start, end);
-            line.SetWidth(0.2f, 0.1f);
-            line.SetVertexCount(2);
+            line.startColor = start;
+            line.endColor = end;
+            line.startWidth = 0.1f;
+            line.endWidth = 0.05f;
+            line.positionCount = 2;
             line.SetPosition(0, Vector3.zero);
             line.SetPosition(1, Vector3.forward * 2);
         }
@@ -71,9 +75,11 @@ namespace KerbalKrashSystem_Leak
 
             // Make it render a red to yellow triangle, 1 meter wide and 2 meters long
             line.material = new Material(Shader.Find("Particles/Additive"));
-            line.SetColors(start, end);
-            line.SetWidth(0.2f, 0.1f);
-            line.SetVertexCount(2);
+            line.startColor = start;
+            line.endColor = end;
+            line.startWidth = 0.1f;
+            line.endWidth = 0.05f;
+            line.positionCount = 2;
             line.SetPosition(0, Vector3.zero);
             line.SetPosition(1, Vector3.zero);
         }
@@ -90,14 +96,14 @@ namespace KerbalKrashSystem_Leak
 
         public Quaternion LookAt(Vector3 point)
         {
-            line.transform.rotation = Quaternion.LookRotation(point);
-            return line.transform.rotation;
+            line.transform.localRotation = Quaternion.LookRotation(point);
+            return line.transform.localRotation;
         }
 
         public Quaternion LookAt(Vector3 point, Vector3 up)
         {
-            line.transform.rotation = Quaternion.LookRotation(point, up);
-            return line.transform.rotation;
+            line.transform.localRotation = Quaternion.LookRotation(point, up);
+            return line.transform.localRotation;
         }
     }
 }

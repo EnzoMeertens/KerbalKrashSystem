@@ -31,16 +31,13 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Assembly-CSharp, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="Assembly-CSharp, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="EZ_Particlez, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+    <Reference Include="KerbalKrashSystem, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KKS-mods\KerbalKrashSystem_Leak\Plugins\EZPZ\Plugins\EZ_Particlez.dll</HintPath>
-    </Reference>
-    <Reference Include="KerbalKrashSystem">
-      <HintPath>D:\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KerbalKrashSystem.dll</HintPath>
+      <HintPath>..\..\..\KerbalKrashSystem\KerbalKrashSystem\bin\Release\KerbalKrashSystem.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -50,7 +47,7 @@
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>D:\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_x64_Data\Managed\UnityEngine.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -60,8 +57,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>copy KerbalKrashSystem_Leak.dll "D:\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KKS-mods\KerbalKrashSystem_Leak\Plugins\KerbalKrashSystem_Leak.dll"
-copy KerbalKrashSystem_Leak.pdb "D:\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KKS-mods\KerbalKrashSystem_Leak\Plugins\KerbalKrashSystem_Leak.pdb"</PostBuildEvent>
+    <PostBuildEvent>"$(ProjectDir)\Resources\pdb2mdb\pdb2mdb.exe" "$(TargetFileName)"
+copy $(TargetName).dll "C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KKS-mods\KerbalKrashSystem_Leak\Plugins\$(TargetName).dll"
+copy $(TargetName).pdb "C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KKS-mods\KerbalKrashSystem_Leak\Plugins\$(TargetName).pdb"
+copy $(TargetName).dll.mdb "C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KKS-mods\KerbalKrashSystem_Leak\Plugins\$(TargetName).dll.mdb"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

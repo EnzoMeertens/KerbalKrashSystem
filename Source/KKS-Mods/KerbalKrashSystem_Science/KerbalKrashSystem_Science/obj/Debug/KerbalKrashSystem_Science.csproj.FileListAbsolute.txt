@@ -29,3 +29,17 @@ C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\Kerbal
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Science\KerbalKrashSystem_Science\bin\Debug\UnityEngine.UI.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Science\KerbalKrashSystem_Science\bin\Debug\KSPAssets.dll
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Science\KerbalKrashSystem_Science\bin\Debug\UnityEngine.xml
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Science\KerbalKrashSystem_Science\bin\Debug\KerbalKrashSystem_Science.dll
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Science\KerbalKrashSystem_Science\bin\Debug\KerbalKrashSystem_Science.pdb
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Science\KerbalKrashSystem_Science\bin\Debug\Assembly-CSharp.dll
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Science\KerbalKrashSystem_Science\bin\Debug\KerbalKrashSystem.dll
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Science\KerbalKrashSystem_Science\bin\Debug\UnityEngine.dll
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Science\KerbalKrashSystem_Science\bin\Debug\UnityEngine.UI.dll
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Science\KerbalKrashSystem_Science\bin\Debug\Assembly-CSharp-firstpass.dll
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Science\KerbalKrashSystem_Science\bin\Debug\Mono.Cecil.dll
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Science\KerbalKrashSystem_Science\bin\Debug\TDx.TDxInput.dll
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Science\KerbalKrashSystem_Science\obj\Debug\KerbalKrashSystem_Science.csprojAssemblyReference.cache
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Science\KerbalKrashSystem_Science\obj\Debug\KerbalKrashSystem_Science.csproj.CoreCompileInputs.cache
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Science\KerbalKrashSystem_Science\obj\Debug\KerbalKrashSystem_Science.csproj.CopyComplete
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Science\KerbalKrashSystem_Science\obj\Debug\KerbalKrashSystem_Science.dll
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Science\KerbalKrashSystem_Science\obj\Debug\KerbalKrashSystem_Science.pdb

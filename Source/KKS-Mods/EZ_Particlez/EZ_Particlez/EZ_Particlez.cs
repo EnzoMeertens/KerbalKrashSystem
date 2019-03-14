@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace EZPZ
 {
-    [KSPAddon(KSPAddon.Startup.Instantly, true)]
+    [KSPAddon(KSPAddon.Startup.Flight, true)]
     public class EZ_Particlez : MonoBehaviour
     {
         public static EZ_Particlez Instance { get; private set; }
@@ -31,16 +31,15 @@ namespace EZPZ
 
                 DontDestroyOnLoad(particle);
 
-                ParticleEmitter particleEmitter = particle.GetComponent<ParticleEmitter>();
+                ParticleSystem particleEmitter = particle.GetComponent<ParticleSystem>();
+                var emission = particleEmitter.emission;
+                var main = particleEmitter.main;
+                var speed = particleEmitter.main.startSpeed;
 
-                particleEmitter.emit = false;
-                particleEmitter.localVelocity = Vector3.zero;
-                particleEmitter.minEnergy = 0;
-                particleEmitter.minEmission = 0;
-                particleEmitter.angularVelocity = 0;
-                particleEmitter.rndVelocity = Vector3.zero;
-                particle.transform.eulerAngles = Vector3.zero;
-                particle.transform.position = Vector3.zero;
+                emission.enabled = false;
+                main.playOnAwake = false;
+                emission.rateOverTime = 0.0f;
+                particleEmitter.Stop();
 
                 ParticleEffects.Add(node.GetValue("Name"), particle);
             }

@@ -1,0 +1,34 @@
+Microsoft (R) Build Engine version 14.0.23107.0
+Copyright (C) Microsoft Corporation. All rights reserved.
+
+Build started 4-3-2019 18:19:50.
+Project "C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\KKS.csproj" on node 1 (ReBuild target(s)).
+CoreClean:
+  Deleting file "C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\bin\Release\KerbalKrashSystem.dll".
+  Deleting file "C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\bin\Release\KerbalKrashSystem.pdb".
+  Deleting file "C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\bin\Release\Assembly-CSharp.dll".
+  Deleting file "C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\bin\Release\UnityEngine.dll".
+  Deleting file "C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\obj\Release\KerbalKrashSystem.dll".
+  Deleting file "C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\obj\Release\KerbalKrashSystem.pdb".
+  Deleting file "C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\obj\Release\KKS.csprojAssemblyReference.cache".
+  Deleting file "C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\obj\Release\KKS.csproj.CoreCompileInputs.cache".
+  Deleting file "C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\obj\Release\KKS.csproj.CopyComplete".
+CoreCompile:
+  C:\Program Files (x86)\MSBuild\14.0\bin\csc.exe /noconfig /nowarn:1701,1702 /nostdlib+ /errorreport:prompt /warn:4 /define:TRACE /highentropyva- /reference:C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\Resources\Assembly-CSharp.dll /reference:C:\Windows\Microsoft.NET\Framework\v2.0.50727\mscorlib.dll /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\v3.5\System.Core.dll" /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\v3.5\System.Data.DataSetExtensions.dll" /reference:C:\Windows\Microsoft.NET\Framework\v2.0.50727\System.Data.dll /reference:C:\Windows\Microsoft.NET\Framework\v2.0.50727\System.dll /reference:C:\Windows\Microsoft.NET\Framework\v2.0.50727\System.Xml.dll /reference:"C:\Program Files (x86)\Reference Assemblies\Microsoft\Framework\v3.5\System.Xml.Linq.dll" /reference:C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\Resources\UnityEngine.dll /debug:pdbonly /filealign:512 /optimize+ /out:obj\Release\KerbalKrashSystem.dll /target:library /utf8output Damageable.cs Debug_Visual_Point.cs Extensions.cs KerbalKrashSystem_Container.cs KerbalKrashSystem.cs KerbalKrashSystem_Engine.cs KerbalKrashSystem_Command.cs KerbalKrashSystem_Exclude.cs KerbalKrashSystem_Other.cs MeshHelper.cs Properties\AssemblyInfo.cs
+_CopyFilesMarkedCopyLocal:
+  Copying file from "C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\Resources\Assembly-CSharp.dll" to "bin\Release\Assembly-CSharp.dll".
+  Copying file from "C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\Resources\UnityEngine.dll" to "bin\Release\UnityEngine.dll".
+CopyFilesToOutputDirectory:
+  Copying file from "obj\Release\KerbalKrashSystem.dll" to "bin\Release\KerbalKrashSystem.dll".
+  KKS -> C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\bin\Release\KerbalKrashSystem.dll
+  Copying file from "obj\Release\KerbalKrashSystem.pdb" to "bin\Release\KerbalKrashSystem.pdb".
+PostBuildEvent:
+  :: copy KerbalKrashSystem.dll "D:\Steam\SteamApps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KerbalKrashSystem.dll"
+  :: copy KerbalKrashSystem.pdb "D:\Steam\SteamApps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\KerbalKrashSystem.pdb"
+Done Building Project "C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\KKS.csproj" (ReBuild target(s)).
+
+Build succeeded.
+    0 Warning(s)
+    0 Error(s)
+
+Time Elapsed 00:00:00.47
