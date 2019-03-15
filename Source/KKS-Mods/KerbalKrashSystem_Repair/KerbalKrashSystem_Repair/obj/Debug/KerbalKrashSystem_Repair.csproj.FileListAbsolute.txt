@@ -33,9 +33,6 @@ C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\Kerbal
 C:\Users\Enzo Meertens\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Repair\KerbalKrashSystem_Repair\obj\Debug\KerbalKrashSystem_Repair.csprojResolveAssemblyReference.cache
 C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Repair\KerbalKrashSystem_Repair\bin\Debug\KerbalKrashSystem_Repair.dll
 C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Repair\KerbalKrashSystem_Repair\bin\Debug\KerbalKrashSystem_Repair.pdb
-C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Repair\KerbalKrashSystem_Repair\bin\Debug\Assembly-CSharp.dll
-C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Repair\KerbalKrashSystem_Repair\bin\Debug\KerbalKrashSystem.dll
-C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Repair\KerbalKrashSystem_Repair\bin\Debug\UnityEngine.dll
 C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Repair\KerbalKrashSystem_Repair\bin\Debug\UnityEngine.UI.dll
 C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Repair\KerbalKrashSystem_Repair\bin\Debug\Assembly-CSharp-firstpass.dll
 C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Repair\KerbalKrashSystem_Repair\bin\Debug\Mono.Cecil.dll
@@ -45,3 +42,5 @@ C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSy
 C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Repair\KerbalKrashSystem_Repair\obj\Debug\KerbalKrashSystem_Repair.csproj.CopyComplete
 C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Repair\KerbalKrashSystem_Repair\obj\Debug\KerbalKrashSystem_Repair.dll
 C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Repair\KerbalKrashSystem_Repair\obj\Debug\KerbalKrashSystem_Repair.pdb
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Repair\KerbalKrashSystem_Repair\bin\Debug\KerbalKrashSystem.pdb
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Repair\KerbalKrashSystem_Repair\bin\Debug\UnityEngine.xml

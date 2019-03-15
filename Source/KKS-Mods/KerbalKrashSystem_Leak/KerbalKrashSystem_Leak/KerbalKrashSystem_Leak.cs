@@ -87,7 +87,7 @@ namespace KerbalKrashSystem_Leak
                     leaking = true;
 
                     if(CheatOptions.InfinitePropellant == false)
-                        resource.amount -= _kerbalKrash.Damage * Time.deltaTime * TimeWarp.CurrentRate * _flowScaling;
+                        resource.amount -= _kerbalKrash.Damage * Time.fixedDeltaTime * TimeWarp.CurrentRate * _flowScaling;
 
                     //Clamp to a minimum of zero resources.
                     if (resource.amount <= 0.0)
