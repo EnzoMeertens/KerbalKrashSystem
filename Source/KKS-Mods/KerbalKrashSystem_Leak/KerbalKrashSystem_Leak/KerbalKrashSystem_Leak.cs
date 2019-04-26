@@ -69,83 +69,68 @@ namespace KerbalKrashSystem_Leak
 
         protected void FixedUpdate()
         {
-            //No need to do anything if damage equals zero (or less).
-            if (_kerbalKrash == null || _kerbalKrash.Damage <= 0)
+            //No need to do anything if damage equals zero (or less) or the part has no resources.
+            if (_kerbalKrash == null || _kerbalKrash.Damage <= 0 || part.Resources == null)
                 return;
 
             bool leaking = false;
             bool sparks = false;
+
             //Drain all of this container's resources.
-            if (part.Resources == null)
-            {
-                Debug.Log("KKS.FixedUpdate, part.Resources is null");
-                ScreenMessages.PostScreenMessage("KKS.FixedUpdate, part.Resources is null", 15f, ScreenMessageStyle.UPPER_CENTER);
-            }
             foreach (PartResource resource in part.Resources)
-                if (resource == null)
+            {
+                //The resource is not available or it's a non-flowing resource (so it can't leak).
+                if (resource == null || resource.info.resourceFlowMode == ResourceFlowMode.NO_FLOW)
+                    continue;
+
+                //Still resources available: keep draining.
+                if (resource.amount > 0.0 || CheatOptions.InfinitePropellant)
                 {
-                    Debug.Log("KKS.FixedUpdate, resource is null");
-                    ScreenMessages.PostScreenMessage("KKS.FixedUpdate, resource is null", 15f, ScreenMessageStyle.UPPER_CENTER);
+                    leaking = true;
+
+                    if (CheatOptions.InfinitePropellant == false)
+                        resource.amount -= _kerbalKrash.Damage * Time.fixedDeltaTime * TimeWarp.CurrentRate * _flowScaling;
+
+                    //Clamp to a minimum of zero resources.
+                    if (resource.amount <= 0.0)
+                        resource.amount = 0.0;
                 }
-                else
+
+                //The resource is electric charge, so we want sparks instead of a fluid leaking.
+                if (resource.resourceName == "ElectricCharge" && part.Resources.Count == 1)
                 {
-                    if (resource.info.resourceFlowMode == ResourceFlowMode.NO_FLOW)
-                        continue;
-
-                    //Still resources available: keep draining.
-                    if (resource.amount > 0.0 || CheatOptions.InfinitePropellant)
-                    {
-                        leaking = true;
-
-                        if (CheatOptions.InfinitePropellant == false)
-                            resource.amount -= _kerbalKrash.Damage * Time.fixedDeltaTime * TimeWarp.CurrentRate * _flowScaling;
-
-                        //Clamp to a minimum of zero resources.
-                        if (resource.amount <= 0.0)
-                            resource.amount = 0.0;
-                    }
-
-                    if (resource.resourceName == "ElectricCharge" && part.Resources.Count == 1)
-                    {
-                        sparks = true;
-                        continue;
-                    }
-
-                    //Fast "average".
-                    _averageResourceAmount = (_averageResourceAmount / 2.0f) + ((float)(resource.amount / resource.maxAmount) / 2.0f);
+                    sparks = true;
+                    continue;
                 }
+
+                //Fast "average".
+                _averageResourceAmount = (_averageResourceAmount / 2.0f) + ((float)(resource.amount / resource.maxAmount) / 2.0f);
+            }
 
             foreach (GameObject leak in _leaks)
             {
                 ParticleSystem particleEmitter = leak.GetComponent<ParticleSystem>();
+
+                //There's no particle emitter available, so we can't render any particles for this leak.
                 if (particleEmitter == null)
-                {
-                    //Debug.Log("KKS.FixedUpdate, particleEmitter is null");
-                    //ScreenMessages.PostScreenMessage("KKS.FixedUpdate, particleEmitter is null", 15f, ScreenMessageStyle.UPPER_CENTER);
-                }
-                else
-                {
-                    var emission = particleEmitter.emission;
-                    var main = particleEmitter.main;
-                    var size_over_lifetime = particleEmitter.sizeOverLifetime;
+                    continue;
 
-                    emission.enabled = leaking;
+                var emission = particleEmitter.emission;
+                var main = particleEmitter.main;
+                var size_over_lifetime = particleEmitter.sizeOverLifetime;
 
-                    //Size over lifetime
-                    size_over_lifetime.sizeMultiplier = _averageResourceAmount * _sizeMultiplier;
+                emission.enabled = leaking;
 
-                    //Flow rate * number of resources vented * current time step * thrust coefficient (assuming ISP of ~65)
-                    float appliedForce = (sparks ? 0.0f : _flowScaling) * _averageResourceAmount * Time.fixedDeltaTime * 0.65f;
-                    //Apply a force from the leak.
-                    var rb = this.GetComponent<Rigidbody>();
-                    if (rb == null)
-                    {
-                        //Debug.Log("KKS.FixedUpdate, this.GetComponent<Rigidbody>() is null");
-                        //ScreenMessages.PostScreenMessage("KKS.FixedUpdate, this.GetComponent<Rigidbody>() is null", 15f, ScreenMessageStyle.UPPER_CENTER);
-                    }
-                    else
-                        rb.AddRelativeForce(Vector3.forward * appliedForce);
-                }
+                //Size over lifetime
+                size_over_lifetime.sizeMultiplier = _averageResourceAmount * _sizeMultiplier;
+
+                //Flow rate * number of resources vented * current time step * thrust coefficient (assuming ISP of ~65)
+                float appliedForce = (sparks ? 0.0f : _flowScaling) * _averageResourceAmount * Time.fixedDeltaTime * 0.65f;
+
+                //Apply a force from the leak.
+                var rb = this.GetComponent<Rigidbody>();
+                if (rb != null)
+                    rb.AddRelativeForce(Vector3.forward * appliedForce);
             }
         }
 
