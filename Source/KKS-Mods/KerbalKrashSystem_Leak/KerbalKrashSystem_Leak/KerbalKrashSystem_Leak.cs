@@ -76,50 +76,76 @@ namespace KerbalKrashSystem_Leak
             bool leaking = false;
             bool sparks = false;
             //Drain all of this container's resources.
-            foreach (PartResource resource in part.Resources)
+            if (part.Resources == null)
             {
-                if (resource.info.resourceFlowMode == ResourceFlowMode.NO_FLOW)
-                    continue;
-
-                //Still resources available: keep draining.
-                if (resource.amount > 0.0 || CheatOptions.InfinitePropellant)
-                {
-                    leaking = true;
-
-                    if(CheatOptions.InfinitePropellant == false)
-                        resource.amount -= _kerbalKrash.Damage * Time.fixedDeltaTime * TimeWarp.CurrentRate * _flowScaling;
-
-                    //Clamp to a minimum of zero resources.
-                    if (resource.amount <= 0.0)
-                        resource.amount = 0.0;
-                }
-
-                if (resource.resourceName == "ElectricCharge" && part.Resources.Count == 1)
-                {
-                    sparks = true;
-                    continue;
-                }
-
-                //Fast "average".
-                _averageResourceAmount = (_averageResourceAmount / 2.0f) + ((float)(resource.amount / resource.maxAmount) / 2.0f);
+                Debug.Log("KKS.FixedUpdate, part.Resources is null");
+                ScreenMessages.PostScreenMessage("KKS.FixedUpdate, part.Resources is null", 15f, ScreenMessageStyle.UPPER_CENTER);
             }
+            foreach (PartResource resource in part.Resources)
+                if (resource == null)
+                {
+                    Debug.Log("KKS.FixedUpdate, resource is null");
+                    ScreenMessages.PostScreenMessage("KKS.FixedUpdate, resource is null", 15f, ScreenMessageStyle.UPPER_CENTER);
+                }
+                else
+                {
+                    if (resource.info.resourceFlowMode == ResourceFlowMode.NO_FLOW)
+                        continue;
+
+                    //Still resources available: keep draining.
+                    if (resource.amount > 0.0 || CheatOptions.InfinitePropellant)
+                    {
+                        leaking = true;
+
+                        if (CheatOptions.InfinitePropellant == false)
+                            resource.amount -= _kerbalKrash.Damage * Time.fixedDeltaTime * TimeWarp.CurrentRate * _flowScaling;
+
+                        //Clamp to a minimum of zero resources.
+                        if (resource.amount <= 0.0)
+                            resource.amount = 0.0;
+                    }
+
+                    if (resource.resourceName == "ElectricCharge" && part.Resources.Count == 1)
+                    {
+                        sparks = true;
+                        continue;
+                    }
+
+                    //Fast "average".
+                    _averageResourceAmount = (_averageResourceAmount / 2.0f) + ((float)(resource.amount / resource.maxAmount) / 2.0f);
+                }
 
             foreach (GameObject leak in _leaks)
             {
                 ParticleSystem particleEmitter = leak.GetComponent<ParticleSystem>();
-                var emission = particleEmitter.emission;
-                var main = particleEmitter.main;
-                var size_over_lifetime = particleEmitter.sizeOverLifetime;
+                if (particleEmitter == null)
+                {
+                    //Debug.Log("KKS.FixedUpdate, particleEmitter is null");
+                    //ScreenMessages.PostScreenMessage("KKS.FixedUpdate, particleEmitter is null", 15f, ScreenMessageStyle.UPPER_CENTER);
+                }
+                else
+                {
+                    var emission = particleEmitter.emission;
+                    var main = particleEmitter.main;
+                    var size_over_lifetime = particleEmitter.sizeOverLifetime;
 
-                emission.enabled = leaking;
+                    emission.enabled = leaking;
 
-                //Size over lifetime
-                size_over_lifetime.sizeMultiplier = _averageResourceAmount * _sizeMultiplier;
+                    //Size over lifetime
+                    size_over_lifetime.sizeMultiplier = _averageResourceAmount * _sizeMultiplier;
 
-                //Flow rate * number of resources vented * current time step * thrust coefficient (assuming ISP of ~65)
-                float appliedForce = (sparks ? 0.0f : _flowScaling) * _averageResourceAmount * Time.fixedDeltaTime * 0.65f;
-                //Apply a force from the leak.
-                this.GetComponent<Rigidbody>().AddRelativeForce(Vector3.forward * appliedForce);
+                    //Flow rate * number of resources vented * current time step * thrust coefficient (assuming ISP of ~65)
+                    float appliedForce = (sparks ? 0.0f : _flowScaling) * _averageResourceAmount * Time.fixedDeltaTime * 0.65f;
+                    //Apply a force from the leak.
+                    var rb = this.GetComponent<Rigidbody>();
+                    if (rb == null)
+                    {
+                        //Debug.Log("KKS.FixedUpdate, this.GetComponent<Rigidbody>() is null");
+                        //ScreenMessages.PostScreenMessage("KKS.FixedUpdate, this.GetComponent<Rigidbody>() is null", 15f, ScreenMessageStyle.UPPER_CENTER);
+                    }
+                    else
+                        rb.AddRelativeForce(Vector3.forward * appliedForce);
+                }
             }
         }
 
