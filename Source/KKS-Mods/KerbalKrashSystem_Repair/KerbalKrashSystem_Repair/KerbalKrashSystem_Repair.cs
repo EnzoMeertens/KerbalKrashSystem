@@ -85,7 +85,7 @@ namespace KerbalKrashSystem_Repair
             if (RequiredTrait != Trait.None.ToString())
             {
                 //Check if current Kerbal meets all trait requirements.
-                if (trait == null || trait.experienceTrait.Title != RequiredTrait || trait.experienceLevel < RequiredLevel)
+                if (trait == null || trait.experienceTrait.Config.Name != RequiredTrait || trait.experienceLevel < RequiredLevel)
                 {
                     //Kerbal does not have the appropriate trait (level).
                     ScreenMessages.PostScreenMessage(part.partInfo.title + " can only be repaired by a level " + RequiredLevel + "(+) " + RequiredTrait + "!", 4, ScreenMessageStyle.UPPER_CENTER);
