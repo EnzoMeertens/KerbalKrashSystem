@@ -235,8 +235,11 @@ namespace KKS
             MeshCollider currentMeshCollider = part.FindModelComponent<MeshCollider>();
             MeshCollider originalMeshCollider = part.partInfo.partPrefab.FindModelComponent<MeshCollider>();
 
-            currentMeshCollider.sharedMesh = originalMeshCollider.sharedMesh;
-            currentMeshCollider.convex = true;
+            if (currentMeshCollider != null && originalMeshCollider != null)
+            {
+                currentMeshCollider.sharedMesh = originalMeshCollider.sharedMesh;
+                currentMeshCollider.convex = true;
+            }
             #endregion
 
             Damage = 0;
@@ -257,108 +260,6 @@ namespace KKS
                 DamageRepaired(this, Damage);
         }
 
-        #region Working
-        ///// <summary>
-        ///// Calculation help constant: (approx.) 1 / √(3).
-        ///// </summary>
-        //private const float invSqrt3 = 0.57735026919f;
-
-        ///// <summary>
-        ///// Apply krash to all meshes in this part.
-        ///// </summary>
-        ///// <param name="krash">Krash to apply.</param>
-        ///// <param name="fireEvent">Fire "DamageReceived" event.</param>
-        //public void ApplyKrash(Krash krash, bool fireEvent = true)
-        //{
-        //    Vector3 relativeVelocity = part.transform.TransformDirection(krash.RelativeVelocity); //Transform the direction of the collision to the world reference frame.
-
-        //    //Remove previous log entry.
-        //    FlightLogger.eventLog.Remove($"{part.name} (ID: {part.flightID}) was damaged {(Damage * 100).ToString("0.00")}%");
-
-        //    Damage += (relativeVelocity.magnitude / part.crashTolerance) / _damageDivider;
-
-        //    //Add new log entry.
-        //    FlightLogger.eventLog.Add($"{part.name} (ID: {part.flightID}) was damaged {(Damage * 100).ToString("0.00")}%");
-
-        //    //Fire "DamageReceived" event.
-        //    if (fireEvent && DamageReceived != null)
-        //        DamageReceived(this, Damage);
-
-        //    if (_exclude)
-        //        return;
-
-        //    //Dent transformation is a maximum of 75% of the part size.
-        //    Vector3 transform = (relativeVelocity / (0.75f * part.partInfo.partSize) / (part.crashTolerance / Malleability));
-        //    Vector3 worldPosition = part.transform.TransformPoint(krash.ContactPoint);
-
-        //    DeformMesh(transform, worldPosition);
-
-        //    DeformCollider(transform, worldPosition);
-        //}
-
-        ///// <summary>
-        ///// Updates the visual components of the part.
-        ///// Thanks Ryan Bray (https://github.com/rbray89).
-        ///// </summary>
-        ///// <param name="transform">Vector indicating the amount of deformation.</param>
-        ///// <param name="worldPosition">Position in the world to apply the deformation from.</param>
-        //private void DeformMesh(Vector3 transform, Vector3 worldPosition)
-        //{
-        //    foreach (MeshFilter meshFilter in meshFilters)
-        //    {
-        //        Mesh mesh = meshFilter.mesh;
-
-        //        if (meshFilter.sharedMesh == null)
-        //            continue;
-
-        //        if (mesh == null)
-        //            mesh = meshFilter.sharedMesh;
-
-        //        if (_subdivide && !subdivided && part.partInfo.partSize >= MeshSubdivisionThreshold)
-        //        {
-        //            subdivided = true;
-        //            MeshHelper.Subdivide(mesh, worldPosition, DentDistance);
-        //        }
-
-        //        Vector3 transformT = meshFilter.transform.InverseTransformVector(transform);
-        //        Vector3 contactPointLocal = meshFilter.transform.InverseTransformPoint(worldPosition);
-        //        Vector3 dentDistanceLocal = meshFilter.transform.TransformDirection(Vector3.one).normalized;
-
-        //        dentDistanceLocal = meshFilter.transform.InverseTransformVector(DentDistance * dentDistanceLocal);
-        //        dentDistanceLocal = Vector3.Max(-dentDistanceLocal, dentDistanceLocal);
-
-        //        Vector3 dentDistanceInv;
-        //        dentDistanceInv.x = invSqrt3 / dentDistanceLocal.x;
-        //        dentDistanceInv.y = invSqrt3 / dentDistanceLocal.y;
-        //        dentDistanceInv.z = invSqrt3 / dentDistanceLocal.z;
-
-        //        Vector3[] vertices = mesh.vertices;
-        //        Color32[] Colors = new Color32[vertices.Length];
-
-        //        for (int i = 0; i < vertices.Length; i++)
-        //        {
-        //            Vector3 distance = vertices[i] - contactPointLocal;
-        //            distance = Vector3.Max(-distance, distance);
-        //            distance = dentDistanceLocal - distance;
-        //            distance.Scale(dentDistanceInv);
-
-        //            if (distance.x < 0 || distance.y < 0 || distance.z < 0)
-        //                continue;
-
-        //            Colors[i] = Color32.Lerp(new Color32(255, 255, 255, 255), new Color(0, 0, 0, 255), Damage);
-
-        //            vertices[i] += distance.sqrMagnitude * transformT;
-        //        }
-
-        //        mesh.vertices = vertices;
-
-        //        //TODO: Make this a KKS-mod
-        //        //mesh.colors32 = Colors;
-        //    }
-        //}
-        #endregion
-
-        #region Experimental 
         /// <summary>
         /// Apply krash to all meshes in this part.
         /// </summary>
@@ -410,7 +311,7 @@ namespace KKS
                 if (mesh == null)
                     mesh = meshFilter.sharedMesh; //No mesh found, use the shared mesh.
 
-                if (_subdivideMesh && !subdivided_mesh && part.partInfo.partSize >= MeshSubdivisionThreshold)
+                if (_subdivideMesh && subdivided_mesh == false && part.partInfo.partSize >= MeshSubdivisionThreshold)
                 {
 #if DEBUG
                     Debug.Log($"{part.name}: mesh subdivided.");
@@ -471,7 +372,6 @@ namespace KKS
                 #endregion
             }
         }
-        #endregion
 
         /// <summary>
         /// Updates the collider component of the part.

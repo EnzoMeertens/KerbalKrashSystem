@@ -13,7 +13,7 @@
         protected override void OnDisabled()
         {
             DamageReceived -= ModuleKerbalKrashSystem_Other_DamageReceived;
-            DamageRepaired += ModuleKerbalKrashSystem_Other_DamageRepaired;
+            DamageRepaired -= ModuleKerbalKrashSystem_Other_DamageRepaired;
         }
 
         private void ModuleKerbalKrashSystem_Other_DamageReceived(KerbalKrashSystem sender, float damage)
@@ -27,7 +27,7 @@
 
         private void ModuleKerbalKrashSystem_Other_DamageRepaired(KerbalKrashSystem sender, float damage)
         {
-            if (damage >= _damageThreshold || !_wasDamaged)
+            if (damage >= _damageThreshold || _wasDamaged == false)
                 return;
 
             _wasDamaged = false;
