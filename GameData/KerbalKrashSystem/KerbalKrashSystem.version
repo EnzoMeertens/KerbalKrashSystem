@@ -1,0 +1,20 @@
+{
+  "NAME": "KerbalKrashSystem",
+  "URL": "https://github.com/EnzoMeertens/KerbalKrashSystem/KKS.version",
+  "DOWNLOAD": "https://github.com/EnzoMeertens/KerbalKrashSystem/tree/master/Release",
+  "GITHUB": {
+    "USERNAME": "EnzoMeertens",
+    "REPOSITORY": "KerbalKrashSystem"
+  },
+  "VERSION": {
+    "MAJOR": 0,
+    "MINOR": 4,
+    "PATCH": 6,
+    "BUILD": 0
+  },
+  "KSP_VERSION_MIN": {
+    "MAJOR": 1,
+    "MINOR": 8,
+    "PATCH": 1
+  }
+}

@@ -1,9 +1,0 @@
-C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\obj\Release\KerbalKrashSystem_Leak.csprojResolveAssemblyReference.cache
-C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\bin\Release\KerbalKrashSystem_Leak.dll
-C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\bin\Release\KerbalKrashSystem_Leak.pdb
-C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\bin\Release\Assembly-CSharp.dll
-C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\bin\Release\EZ_Particlez.dll
-C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\bin\Release\KerbalKrashSystem.dll
-C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\bin\Release\UnityEngine.dll
-C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\obj\Release\KerbalKrashSystem_Leak.dll
-C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KKS-Mods\KerbalKrashSystem_Leak\KerbalKrashSystem_Leak\obj\Release\KerbalKrashSystem_Leak.pdb
