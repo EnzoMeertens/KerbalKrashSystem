@@ -2,9 +2,9 @@
   "ExpandedNodes": [
     "",
     "\\Source",
-    "\\Source\\KKS-Mods",
-    "\\Source\\KKS-Mods\\KerbalKrashSystem_Leak",
-    "\\Source\\KKS-Mods\\KerbalKrashSystem_Leak\\KerbalKrashSystem_Leak",
+    "\\Source\\KKS-Mods\\KerbalKrashSystem_KIS_Repair",
+    "\\Source\\KKS-Mods\\KerbalKrashSystem_KIS_Repair\\KerbalKrashSystem_KIS_Repair",
+    "\\Source\\KKS-Mods\\KerbalKrashSystem_KIS_Repair\\KerbalKrashSystem_KIS_Support",
     "\\Source\\KKS-Mods\\KerbalKrashSystem_Repair",
     "\\Source\\KKS-Mods\\KerbalKrashSystem_Repair\\KerbalKrashSystem_Repair",
     "\\Source\\KKS-Mods\\KerbalKrashSystem_Science",
@@ -12,6 +12,6 @@
     "\\Source\\KKS-Mods\\Messenger",
     "\\Source\\KKS-Mods\\Messenger\\Messenger"
   ],
-  "SelectedNode": "\\Source\\Damageable.cs",
+  "SelectedNode": "\\Source\\KerbalKrashSystem.cs",
   "PreviewInSolutionExplorer": false
 }

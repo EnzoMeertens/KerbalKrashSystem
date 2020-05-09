@@ -1,15 +1,15 @@
 {
   "NAME": "KerbalKrashSystem",
-  "URL": "https://github.com/EnzoMeertens/KerbalKrashSystem/KKS.version",
-  "DOWNLOAD": "https://github.com/EnzoMeertens/KerbalKrashSystem/tree/master/Release",
+  "URL": "https://github.com/linuxgurugamer/KerbalKrashSystem/KerbalKrashSystem.version",
+  "DOWNLOAD": "https://github.com/linuxgurugamer/KerbalKrashSystem/tree/master/Release",
   "GITHUB": {
-    "USERNAME": "EnzoMeertens",
+    "USERNAME": "linuxgurugamer",
     "REPOSITORY": "KerbalKrashSystem"
   },
   "VERSION": {
     "MAJOR": 0,
-    "MINOR": 4,
-    "PATCH": 6,
+    "MINOR": 5,
+    "PATCH": 0,
     "BUILD": 0
   },
   "KSP_VERSION_MIN": {

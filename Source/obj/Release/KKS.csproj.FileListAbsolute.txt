@@ -21,3 +21,13 @@ C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\Kerb
 C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\obj\Release\KKS.csprojAssemblyReference.cache
 C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\obj\Release\KKS.csproj.CoreCompileInputs.cache
 C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\obj\Release\KKS.csproj.CopyComplete
+D:\Users\jbb\github\KerbalKrashSystem\Source\bin\Release\KerbalKrashSystem.dll
+D:\Users\jbb\github\KerbalKrashSystem\Source\bin\Release\KerbalKrashSystem.pdb
+D:\Users\jbb\github\KerbalKrashSystem\Source\bin\Release\KIS.dll
+D:\Users\jbb\github\KerbalKrashSystem\Source\bin\Release\KSPDev_Utils.2.2.dll
+D:\Users\jbb\github\KerbalKrashSystem\Source\bin\Release\KSPDev_Utils.2.2.xml
+D:\Users\jbb\github\KerbalKrashSystem\Source\obj\Release\KKS.csprojAssemblyReference.cache
+D:\Users\jbb\github\KerbalKrashSystem\Source\obj\Release\KKS.csproj.CoreCompileInputs.cache
+D:\Users\jbb\github\KerbalKrashSystem\Source\obj\Release\KKS.csproj.CopyComplete
+D:\Users\jbb\github\KerbalKrashSystem\Source\obj\Release\KerbalKrashSystem.dll
+D:\Users\jbb\github\KerbalKrashSystem\Source\obj\Release\KerbalKrashSystem.pdb
