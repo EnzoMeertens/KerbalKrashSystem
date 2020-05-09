@@ -31,7 +31,7 @@
 1:KerbalKrashSystem, KerbalKrashSystem.version
 
 # 2:PROJNAME, PROJFILE, VERSIONFILE, PLUGINSFOLDER
-2:KerbalKrashSystem,Source/KerbalKrashSystem.csproj,KerbalKrashSystem.version,GameData/KerbalKrashSystem/Plugins
+2:KerbalKrashSystem,Source/KKS.csproj,KerbalKrashSystem.version,GameData/KerbalKrashSystem/Plugins
 
 # 3:SOURCEFILE, DESTDIR
 3:KerbalKrashSystem.version,GameData/KerbalKrashSystem
