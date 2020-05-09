@@ -35,8 +35,8 @@
 
 # 3:SOURCEFILE, DESTDIR
 3:KerbalKrashSystem.version,GameData/KerbalKrashSystem
-3:License.txt,GameData/KerbalHotSeat
-#3:README.md,GameData/KerbalHotSeat
+3:License.txt,GameData/KerbalKrashSystem
+#3:README.md,GameData/KerbalKrashSystem
 
 
 #
