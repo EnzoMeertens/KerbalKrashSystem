@@ -1,0 +1,44 @@
+#
+# This file contains several types of information:
+#
+# 0     KSP version, if not the current
+# 1     Mod install directory, version file to use when building zip file
+# 2     Project definitions
+# 2c    Compiler options and flags
+# 3     Files to copy, source, dest
+# 4     Directory to copy, sourcedir, destdir
+# 5     Add ModuleManager to GameData
+# 6     Spacedock.info mod id
+# 7		Additional folders in the GameData to be included in the final zip
+# 8		Additional mods to include, will copy into GameData and will be included in zip
+# 9     Additional folders to include, at the same level as the GameData
+# 10  Additional root top level directory
+# 11  zip file name
+
+# Special case if files are in the GameData directory itself
+# Special Case:    7:GameData
+
+#
+# All paths are relative to the top git folder of the repo
+#
+# and must use forward slashes
+#
+
+# 0:KSPVersion
+# 0:1.3
+
+# 1:GAMEDIR, VERSIONFILE [, GITHUBREPO ]
+1:KerbalKrashSystem, KerbalKrashSystem.version
+
+# 2:PROJNAME, PROJFILE, VERSIONFILE, PLUGINSFOLDER
+2:KerbalKrashSystem,Source/KKS.csproj,KerbalKrashSystem.version,GameData/KerbalKrashSystem/Plugins
+
+# 3:SOURCEFILE, DESTDIR
+3:KerbalKrashSystem.version,GameData/KerbalKrashSystem
+3:License.txt,GameData/KerbalKrashSystem
+#3:README.md,GameData/KerbalKrashSystem
+
+
+#
+# End of file
+#

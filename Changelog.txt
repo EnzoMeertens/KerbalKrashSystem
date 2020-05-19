@@ -1,0 +1,18 @@
+Changelog
+
+0.5.0
+	Adoption by Linuxgurugamer
+	This release is a rollup of a number of commits which were never released:
+
+	@EnzoMeertens, Feb 23, 2020
+		Added solar panel class. Removed old code. Added collider null check.
+
+	@linuxgurugamer, Noc 5, 2019
+		Update KerbalKrashSystem_Repair.cs. Fix repair errors in non-english language
+
+	@7ranceaddic7, June 6, 2019
+		Update KerbalKrashSystem for MM warnings
+		Update KerbalKrashSystem_Science.cfg, remove extraneous :FOR
+	
+	Additional changes for the adoption
+		Added buildRelease.bat, deploy.bat, jenkins.txt, KerbalKrashSystem.version, README.md
