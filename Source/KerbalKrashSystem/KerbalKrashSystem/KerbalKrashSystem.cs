@@ -68,6 +68,12 @@ namespace KKS
         /// </summary>
         [KSPField(guiName = "Exclude", guiActive = false)]
         public bool _exclude = false;
+
+        /// <summary>
+        /// Boolean indicating if part is excluded from deformations.
+        /// </summary>
+        [KSPField(guiName = "Exclude", guiActive = false)]
+        public bool _excludeCollider = false;
         #endregion
 
         #region Protected fields
@@ -290,7 +296,8 @@ namespace KKS
 
             DeformMesh(transform, worldPosition);
 
-            DeformCollider(transform, worldPosition);
+            if(_excludeCollider == false)
+                DeformCollider(transform, worldPosition);
         }
 
         /// <summary>

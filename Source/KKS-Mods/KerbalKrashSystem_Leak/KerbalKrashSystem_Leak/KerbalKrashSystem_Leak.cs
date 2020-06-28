@@ -168,7 +168,7 @@ namespace KerbalKrashSystem_Leak
                 //Only contains electric charge.
                 if (resource.resourceName == "ElectricCharge" && part.Resources.Count == 1)
                 {
-                    leak = (GameObject)Instantiate(Resources.Load("Effects/fx_exhaustSparks_yellow"));
+                    leak = (GameObject)Instantiate(Resources.Load("Effects/fx_exhaustSparks_flameout"));
                     sparks = true;
                 }
                 else //Contains something else (oxidizer, monopropellant, etc.).

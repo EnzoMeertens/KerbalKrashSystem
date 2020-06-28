@@ -9,18 +9,19 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>KKS</RootNamespace>
     <AssemblyName>KerbalKrashSystem</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
+    <DebugType>portable</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
@@ -29,10 +30,11 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">
-      <HintPath>Resources\Assembly-CSharp.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_x64_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -41,7 +43,13 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Xml" />
     <Reference Include="UnityEngine">
-      <HintPath>Resources\UnityEngine.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_x64_Data\Managed\UnityEngine.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_x64_Data\Managed\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>..\..\..\..\..\..\..\..\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\KSP_x64_Data\Managed\UnityEngine.PhysicsModule.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -50,6 +58,7 @@
     <Compile Include="Extensions.cs" />
     <Compile Include="KerbalKrashSystem_Container.cs" />
     <Compile Include="KerbalKrashSystem.cs" />
+    <Compile Include="KerbalKrashSystem_Wheel.cs" />
     <Compile Include="KerbalKrashSystem_Engine.cs" />
     <Compile Include="KerbalKrashSystem_Command.cs" />
     <Compile Include="KerbalKrashSystem_Exclude.cs" />
@@ -60,10 +69,10 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>"$(ProjectDir)\Resources\pdb2mdb\pdb2mdb.exe" "$(TargetFileName)"
+    <PostBuildEvent>:: "$(ProjectDir)\Resources\pdb2mdb\pdb2mdb.exe" "$(TargetFileName)"
 copy $(TargetName).dll "C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\$(TargetName).dll"
 copy $(TargetName).pdb "C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\$(TargetName).pdb"
-copy $(TargetName).dll.mdb "C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\$(TargetName).dll.mdb"</PostBuildEvent>
+:: copy $(TargetName).dll.mdb "C:\Program Files (x86)\Steam\steamapps\common\Kerbal Space Program\GameData\KerbalKrashSystem\Plugins\$(TargetName).dll.mdb"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
