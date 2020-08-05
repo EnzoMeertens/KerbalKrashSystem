@@ -98,3 +98,4 @@ C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\Kerb
 C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\obj\Debug\KKS.csproj.CopyComplete
 C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\obj\Debug\KerbalKrashSystem.dll
 C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\obj\Debug\KerbalKrashSystem.pdb
+C:\Users\Marcin\Documents\GitHub\KerbalKrashSystem\Source\KerbalKrashSystem\KerbalKrashSystem\obj\Debug\KKS.csprojAssemblyReference.cache

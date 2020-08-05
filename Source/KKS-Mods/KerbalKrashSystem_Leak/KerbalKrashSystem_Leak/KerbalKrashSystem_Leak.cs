@@ -239,7 +239,7 @@ namespace KerbalKrashSystem_Leak
             emission.rateOverDistance = 0;
             if (sparks)
             {
-                float random_time = Random.Range(0.5f, 2.0f);
+                float random_time = Random.Range(1.0f, 6.0f);
                 emission.SetBursts(new ParticleSystem.Burst[]
                 {
                     new ParticleSystem.Burst(0.00f, 5, 25, 0, random_time),
@@ -284,7 +284,7 @@ namespace KerbalKrashSystem_Leak
             size_over_lifetime.size = new ParticleSystem.MinMaxCurve(sparks ? 1.0f : _sizeMultiplier, sparks ? curve_down : curve_up);
             #endregion
 
-            #region trails
+            #region Trails
             //var trails = particleEmitter.trails;
             //trails.enabled = sparks;
             //trails.ratio = 1.0f;
@@ -314,8 +314,8 @@ namespace KerbalKrashSystem_Leak
             renderer.renderMode = sparks ? ParticleSystemRenderMode.Stretch : ParticleSystemRenderMode.Billboard;
             renderer.lengthScale = 1.0f;
             renderer.velocityScale = sparks ? -0.1f : 1.0f;
-            if (sparks)
-                renderer.material.shader = Shader.Find("Particles/Additive");
+            //if (sparks)
+                //renderer.material.shader = Shader.Find("Particles/Additive");
             #endregion
 
             particleEmitter.Play();

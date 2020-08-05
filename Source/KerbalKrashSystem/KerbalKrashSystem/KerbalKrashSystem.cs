@@ -325,7 +325,7 @@ namespace KKS
 #endif
 
                     subdivided_mesh = true;
-                    MeshHelper.Subdivide(mesh, worldPosition, 0);
+                    //MeshHelper.Subdivide(mesh, worldPosition, 0);
                 }
 
                 Vector3 transformT = meshFilter.transform.InverseTransformVector(transform); //The amount to dent the mesh (locally).
@@ -396,7 +396,7 @@ namespace KKS
                 Debug.Log($"{part.name}: collider subdivided.");
 #endif
                 subdivided_collider = true;
-                MeshHelper.Subdivide(colliderMesh, worldPosition, 0);
+                //MeshHelper.Subdivide(colliderMesh, worldPosition, 0);
             }
 
             Vector3 transformT = meshCollider.transform.InverseTransformVector(transform); //The amount to dent the mesh (locally).
